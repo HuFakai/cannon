@@ -1,0 +1,131 @@
+/* 全局CSS变量定义 - 整个应用程序的设计系统颜色和效果定义 */
+:root {
+  /* 主要渐变色 - 紫蓝色系，用于主要按钮和强调元素 */
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* 次要渐变色 - 粉红色系，用于次要元素和装饰 */
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  
+  /* 强调渐变色 - 蓝青色系，用于突出显示和活跃状态 */
+  --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  
+  /* 深色渐变色 - 深灰色系，用于背景和容器 */
+  --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  
+  /* 成功状态渐变色 - 绿色系，用于成功提示和正向反馈 */
+  --success-gradient: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+  
+  /* 警告状态渐变色 - 红粉色系，用于错误提示和警告信息 */
+  --warning-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  
+  /* 毛玻璃背景色 - 半透明黑色，营造毛玻璃效果的基础 */
+  --glass-bg: rgba(0, 0, 0, 0.15);
+  
+  /* 毛玻璃边框色 - 半透明白色，增强毛玻璃效果的边界定义 */
+  --glass-border: rgba(255, 255, 255, 0.3);
+}
+
+/* 应用程序主容器样式 - 整个React应用的根容器 */
+.App {
+  text-align: center;                         /* 文字对齐：全局居中对齐，保持整体视觉平衡 */
+  min-height: 100vh;                          /* 最小高度：100%视口高度，确保全屏覆盖 */
+  display: flex;                              /* 弹性布局：启用flexbox，便于子元素排列 */
+  flex-direction: column;                     /* 主轴方向：垂直排列，头部-主要内容-底部结构 */
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #533483 75%, #7209b7 100%); /* 背景：多色深空渐变，营造科技感宇宙氛围 */
+  background-size: 400% 400%;                 /* 背景尺寸：放大至400%，为动画提供移动空间 */
+  animation: gradientShift 15s ease infinite; /* 动画：渐变移动动画，15秒循环，营造动态背景 */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 字体族：现代无衬线字体栈，确保跨平台兼容 */
+  position: relative;                         /* 相对定位：为伪元素和装饰层提供定位基准 */
+}
+
+/* 应用程序装饰背景层 - 增加视觉深度和科技感的光效装饰 */
+.App::before {
+  content: '';                               /* 伪元素：必须有content属性才能显示 */
+  position: fixed;                           /* 固定定位：相对于视口固定，不随页面滚动 */
+  top: 0;                                    /* 定位：贴顶部边缘 */
+  left: 0;                                   /* 定位：贴左边边缘 */
+  right: 0;                                  /* 定位：贴右边边缘 */
+  bottom: 0;                                 /* 定位：贴底部边缘，覆盖整个视口 */
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), /* 径向渐变：左侧中部紫色光晕，营造神秘感 */
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%), /* 径向渐变：右上角粉色光晕，增加温暖感 */
+    radial-gradient(circle at 40% 80%, rgba(139, 233, 253, 0.3) 0%, transparent 50%); /* 径向渐变：左下角青色光晕，提供清新感 */
+  pointer-events: none;                      /* 禁用鼠标事件：装饰层不干扰用户交互 */
+  z-index: 0;                               /* 层级：最底层，确保在所有内容之下 */
+}
+
+/* 背景渐变移动动画关键帧 - 定义动态背景的移动效果 */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }         /* 起始：渐变位置在左侧 */
+  50% { background-position: 100% 50%; }      /* 中间：渐变位置移动到右侧 */
+  100% { background-position: 0% 50%; }       /* 结束：返回起始位置，形成循环 */
+}
+
+/* 应用程序头部样式 - 顶部导航和标题区域，采用毛玻璃设计 */
+.App-header {
+  background: var(--glass-bg);               /* 背景：使用毛玻璃背景色变量 */
+  backdrop-filter: blur(20px);               /* 背景模糊：20px模糊效果，营造毛玻璃质感 */
+  border-bottom: 1px solid var(--glass-border); /* 底边框：半透明白色边框，增强层次感 */
+  padding: 20px;                             /* 内边距：四周20px，提供舒适的内容间距 */
+  color: white;                              /* 文字颜色：白色，确保在深色背景下的可读性 */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* 盒阴影：向下投影，增加头部的浮动感 */
+  position: relative;                        /* 相对定位：为光效动画提供基准 */
+  overflow: hidden;                          /* 溢出隐藏：隐藏光效动画的超出部分 */
+  z-index: 2;                               /* 层级：高于背景装饰层，确保头部可见 */
+}
+
+/* 头部光效动画 - 为头部添加扫光效果，增强科技感 */
+.App-header::before {
+  content: '';                               /* 伪元素：创建光效层 */
+  position: absolute;                        /* 绝对定位：相对于头部容器定位 */
+  top: 0;                                    /* 定位：贴顶部 */
+  left: -100%;                               /* 初始位置：左侧外部，准备滑入 */
+  width: 100%;                               /* 宽度：与头部同宽 */
+  height: 100%;                              /* 高度：与头部同高 */
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); /* 渐变：透明-白色-透明的扫光效果 */
+  animation: shimmer 3s infinite;            /* 动画：扫光动画，3秒循环，无限重复 */
+}
+
+/* 扫光动画关键帧 - 定义光效的移动轨迹 */
+@keyframes shimmer {
+  0% { left: -100%; }                        /* 起始：左侧外部 */
+  100% { left: 100%; }                       /* 结束：右侧外部，形成扫过效果 */
+}
+
+/* 头部主标题样式 - 应用程序的主要标题，采用渐变文字效果 */
+.App-header h1 {
+  margin: 0;                                 /* 外边距：重置默认边距，避免不必要的空间 */
+  font-size: 2.5rem;                         /* 字体大小：2.5倍根字体大小，突出标题重要性 */
+  font-weight: 700;                          /* 字体粗细：粗体，增强标题的视觉重量 */
+  background: linear-gradient(45deg, #fff, #e0e0e0); /* 背景：白色到浅灰的渐变，用于文字填充 */
+  -webkit-background-clip: text;             /* WebKit背景裁剪：仅应用于文字部分 */
+  -webkit-text-fill-color: transparent;     /* WebKit文字填充：透明，显示背景渐变 */
+  background-clip: text;                     /* 标准背景裁剪：仅应用于文字部分 */
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.5); /* 文字阴影：白色发光效果，增强科技感 */
+  letter-spacing: 2px;                       /* 字符间距：增加2px间距，提升视觉效果 */
+}
+
+/* 主要内容区域样式 - 应用程序的核心内容容器 */
+main {
+  flex: 1;                                   /* 弹性：占据剩余空间，确保内容区域最大化 */
+  display: flex;                             /* 弹性布局：为内容排列提供灵活性 */
+  justify-content: center;                   /* 主轴对齐：水平居中，保持内容居中显示 */
+  align-items: center;                       /* 交叉轴对齐：垂直居中，创造平衡布局 */
+  padding: 20px;                             /* 内边距：四周20px，为内容提供呼吸空间 */
+  position: relative;                        /* 相对定位：确保内容在装饰层之上 */
+  z-index: 1;                               /* 层级：高于背景装饰层，低于头部和底部 */
+}
+
+/* 应用程序底部样式 - 页脚信息区域，采用毛玻璃设计 */
+.App-footer {
+  background: var(--glass-bg);               /* 背景：使用毛玻璃背景色变量，与头部保持一致 */
+  backdrop-filter: blur(20px);               /* 背景模糊：20px模糊效果，营造毛玻璃质感 */
+  border-top: 1px solid var(--glass-border); /* 顶边框：半透明白色边框，与头部形成呼应 */
+  color: white;                              /* 文字颜色：白色，确保在深色背景下的可读性 */
+  padding: 15px;                             /* 内边距：15px，适中的底部间距 */
+  font-size: 0.9rem;                         /* 字体大小：0.9倍根字体，较小的辅助信息字体 */
+  font-weight: 300;                          /* 字体粗细：细体，营造精致感 */
+  letter-spacing: 1px;                       /* 字符间距：增加1px间距，提升可读性 */
+  position: relative;                        /* 相对定位：确保底部在装饰层之上 */
+  z-index: 2;                               /* 层级：与头部相同层级，确保可见性 */
+} 

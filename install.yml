@@ -1,0 +1,180 @@
+# 炮与兵棋游戏 - 1Panel应用商店安装配置
+
+app:
+  key: cannon-soldiers-game
+  name: 炮与兵棋游戏
+  tags:
+    - 游戏
+    - 策略
+    - 联机对战
+    - React
+    - WebSocket
+  shortDesc: 经典6x6棋盘策略游戏，支持实时联机对战
+  type: runtime
+  crossVersionUpdate: true
+  limit: 1
+  recommend: 10
+  
+metadata:
+  website: https://github.com/your-username/cannonweb
+  github: https://github.com/your-username/cannonweb
+  document: https://github.com/your-username/cannonweb/blob/main/README.md
+  category: 游戏娱乐
+  author: CGameDev
+  license: MIT
+  
+description: |
+  ## 🎮 炮与兵棋游戏
+  
+  一个基于React和TypeScript开发的经典6x6棋盘策略游戏，采用现代化的科技风UI设计，支持实时联机对战。
+  
+  ### ✨ 游戏特色
+  - 🎯 经典大炮与小兵对战规则
+  - 👥 支持实时联机对战（WebSocket）
+  - 🎨 现代科技风毛玻璃UI设计
+  - 📱 响应式设计，完美支持移动设备
+  - 🚀 Docker容器化部署，一键启动
+  - 🔧 完善的健康检查和状态监控
+  
+  ### 🎲 游戏规则
+  1. **大炮玩家**：操作2枚"大炮"棋子，具有先手优势
+  2. **小兵玩家**：操作18枚"小兵"棋子，数量众多
+  3. **移动规则**：大炮玩家先手，双方轮流移动棋子
+  4. **攻击规则**：大炮可以跳跃攻击，吃掉相隔一格的小兵
+  5. **胜负条件**：
+     - 小兵数量少于6个时，大炮玩家获胜
+     - 大炮无法移动时，小兵玩家获胜
+  
+  ### 🛠 技术栈
+  - **前端**：React + TypeScript + CSS3
+  - **后端**：Node.js + WebSocket
+  - **部署**：Docker + Nginx + Supervisor
+  - **UI设计**：毛玻璃效果 + 科技风主题
+  
+  ### 📊 系统要求
+  - CPU：1核心
+  - 内存：512MB
+  - 存储：1GB
+  - 网络：需要开放80和8080端口
+
+version: "1.0.0"
+
+install:
+  # 环境检查
+  requirements:
+    - docker: ">=20.10.0"
+    - docker-compose: ">=1.29.0"
+    - memory: "512MB"
+    - storage: "1GB"
+    
+  # 端口配置
+  ports:
+    - port: 80
+      description: "HTTP服务端口"
+      required: true
+    - port: 8080 
+      description: "WebSocket服务端口"
+      required: true
+      
+  # 环境变量
+  environment:
+    - key: NODE_ENV
+      value: production
+      description: "Node.js运行环境"
+    - key: PORT
+      value: "8080"
+      description: "WebSocket服务端口"
+      
+  # 卷挂载
+  volumes:
+    - name: logs
+      path: "/app/logs"
+      description: "应用日志目录"
+    - name: nginx-logs  
+      path: "/var/log/nginx"
+      description: "Nginx日志目录"
+
+# Docker Compose配置
+compose: |
+  version: '3.8'
+  
+  services:
+    cannon-game:
+      build: .
+      container_name: cannon-game-app
+      restart: unless-stopped
+      ports:
+        - "80:80"
+        - "8080:8080"
+      environment:
+        - NODE_ENV=production
+        - PORT=8080
+      volumes:
+        - ./logs:/app/logs
+        - ./nginx-logs:/var/log/nginx
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost/health"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 40s
+      labels:
+        - "traefik.enable=true"
+        - "1panel.app=cannon-game"
+
+# 安装后操作
+post_install:
+  message: |
+    🎉 炮与兵棋游戏安装成功！
+    
+    📍 访问地址：
+    • 游戏主页：http://{{.ServerIP}}
+    • 状态监控：http://{{.ServerIP}}/status.html
+    • 健康检查：http://{{.ServerIP}}/health
+    
+    🎮 开始游戏：
+    1. 在浏览器中打开游戏地址
+    2. 点击"创建房间"或"加入房间"
+    3. 等待对手加入开始游戏
+    
+    🔧 管理操作：
+    • 查看日志：在1Panel容器管理中查看
+    • 重启服务：重启cannon-game-app容器
+    • 状态监控：访问状态监控页面
+    
+  scripts:
+    - name: "健康检查"
+      command: "docker exec cannon-game-app curl -f http://localhost/health"
+    - name: "查看状态"
+      command: "docker ps | grep cannon-game-app"
+    - name: "重启服务"
+      command: "docker restart cannon-game-app"
+
+# 卸载配置
+uninstall:
+  cleanup:
+    - "docker-compose down"
+    - "docker rmi cannon-game:latest"
+    - "rm -rf ./logs"
+    - "rm -rf ./nginx-logs"
+
+# 更新配置  
+update:
+  strategy: "rolling"
+  backup: true
+  rollback: true
+  
+# 监控配置
+monitoring:
+  health_check:
+    endpoint: "/health"
+    interval: "30s"
+    timeout: "10s"
+  
+  metrics:
+    - name: "容器状态"
+      command: "docker ps | grep cannon-game-app"
+    - name: "内存使用"
+      command: "docker stats cannon-game-app --no-stream --format 'table {{.MemUsage}}'"
+    - name: "CPU使用"
+      command: "docker stats cannon-game-app --no-stream --format 'table {{.CPUPerc}}'" 

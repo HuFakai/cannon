@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>联机调试页面</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #2a2a3a;
+            color: white;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto;
+        }
+        .panel {
+            background: #3a3a4a;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            display: inline-block;
+            width: 45%;
+            vertical-align: top;
+        }
+        .btn {
+            background: #4a90e2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover { background: #357abd; }
+        .input { 
+            padding: 8px; 
+            margin: 5px;
+            border-radius: 3px;
+            border: 1px solid #666;
+            background: #2a2a3a;
+            color: white;
+        }
+        .log {
+            background: #1a1a2a;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { color: #5cb85c; }
+        .error { color: #d9534f; }
+        .info { color: #5bc0de; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 炮与兵棋联机调试</h1>
+        
+        <div class="panel">
+            <h3>玩家1 (大炮)</h3>
+            <input type="text" id="room1" class="input" placeholder="房间ID" value="TEST01">
+            <button class="btn" onclick="joinRoom(1)">加入房间</button>
+            <button class="btn" onclick="disconnect(1)">断开连接</button>
+            <div id="log1" class="log"></div>
+            <div>状态: <span id="status1">未连接</span></div>
+        </div>
+        
+        <div class="panel">
+            <h3>玩家2 (小兵)</h3>
+            <input type="text" id="room2" class="input" placeholder="房间ID" value="TEST01">
+            <button class="btn" onclick="joinRoom(2)">加入房间</button>
+            <button class="btn" onclick="disconnect(2)">断开连接</button>
+            <div id="log2" class="log"></div>
+            <div>状态: <span id="status2">未连接</span></div>
+        </div>
+        
+        <div style="clear: both; text-align: center; margin-top: 20px;">
+            <button class="btn" onclick="clearLogs()">清空日志</button>
+            <button class="btn" onclick="window.open('/', '_blank')">打开游戏</button>
+        </div>
+    </div>
+
+    <script>
+        const managers = {};
+        
+        function log(player, message, type = 'info') {
+            const logEl = document.getElementById(`log${player}`);
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            logEl.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+        
+        function updateStatus(player, status) {
+            document.getElementById(`status${player}`).textContent = status;
+        }
+        
+        function createManager(player) {
+            if (managers[player]) {
+                managers[player].disconnect();
+            }
+            
+            const ws = new WebSocket('ws://localhost:8080');
+            managers[player] = ws;
+            
+            ws.onopen = () => {
+                log(player, '✅ WebSocket连接已建立', 'success');
+                updateStatus(player, '已连接');
+            };
+            
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    log(player, `📨 收到消息: ${data.type}`, 'info');
+                    
+                    if (data.type === 'room_joined') {
+                        log(player, `🏠 加入房间成功: ${data.playerType} (${data.playerId})`, 'success');
+                    } else if (data.type === 'player_joined') {
+                        log(player, `👥 玩家加入: ${data.playersCount}/2`, 'info');
+                    } else if (data.type === 'game_start') {
+                        log(player, '🎮 游戏开始!', 'success');
+                    } else if (data.type === 'error') {
+                        log(player, `❌ 错误: ${data.message}`, 'error');
+                    }
+                } catch (e) {
+                    log(player, `❌ 解析消息失败: ${e.message}`, 'error');
+                }
+            };
+            
+            ws.onclose = (event) => {
+                log(player, `🔌 连接关闭 (${event.code})`, 'error');
+                updateStatus(player, '已断开');
+            };
+            
+            ws.onerror = (error) => {
+                log(player, `❌ 连接错误: ${error}`, 'error');
+                updateStatus(player, '错误');
+            };
+            
+            return ws;
+        }
+        
+        function joinRoom(player) {
+            const roomId = document.getElementById(`room${player}`).value;
+            if (!roomId) {
+                log(player, '❌ 请输入房间ID', 'error');
+                return;
+            }
+            
+            log(player, `🔄 正在连接...`, 'info');
+            updateStatus(player, '连接中...');
+            
+            const ws = createManager(player);
+            
+            ws.onopen = () => {
+                log(player, '✅ WebSocket连接已建立', 'success');
+                updateStatus(player, '已连接');
+                
+                // 发送加入房间消息
+                ws.send(JSON.stringify({
+                    type: 'join_room',
+                    roomId: roomId,
+                    playerName: `测试玩家${player}`,
+                    timestamp: Date.now()
+                }));
+                
+                log(player, `📤 发送加入房间请求: ${roomId}`, 'info');
+            };
+        }
+        
+        function disconnect(player) {
+            if (managers[player]) {
+                managers[player].close(1000, '用户主动断开');
+                delete managers[player];
+                log(player, '🔌 主动断开连接', 'info');
+            }
+        }
+        
+        function clearLogs() {
+            document.getElementById('log1').innerHTML = '';
+            document.getElementById('log2').innerHTML = '';
+        }
+        
+        // 页面加载完成后的初始化
+        window.onload = () => {
+            log(1, '🚀 调试工具已加载', 'info');
+            log(2, '🚀 调试工具已加载', 'info');
+        };
+    </script>
+</body>
+</html> 

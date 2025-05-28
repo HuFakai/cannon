@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # 炮与兵棋游戏主服务
+  cannon-game:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: cannon-game-app
+    restart: unless-stopped
+    ports:
+      - "80:80"        # HTTP端口
+      - "8080:8080"    # WebSocket端口
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+    volumes:
+      - ./logs:/app/logs                    # 应用日志挂载
+      - /var/log/nginx:/var/log/nginx       # Nginx日志挂载
+    networks:
+      - cannon-game-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 可选：Redis缓存服务（用于扩展功能）
+  redis:
+    image: redis:7-alpine
+    container_name: cannon-game-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - cannon-game-network
+    command: redis-server --appendonly yes
+    profiles:
+      - redis  # 使用profile控制是否启用
+
+  # 可选：数据库服务（用于保存游戏记录）
+  postgres:
+    image: postgres:15-alpine
+    container_name: cannon-game-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cannon_game
+      POSTGRES_USER: cannon_user
+      POSTGRES_PASSWORD: cannon_password_2024
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - cannon-game-network
+    profiles:
+      - database  # 使用profile控制是否启用
+
+volumes:
+  redis-data:
+    driver: local
+  postgres-data:
+    driver: local
+
+networks:
+  cannon-game-network:
+    driver: bridge 

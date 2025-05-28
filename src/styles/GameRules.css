@@ -1,0 +1,170 @@
+/* 游戏规则卡片主容器样式 */
+.game-rules {
+  margin: 20px;                              /* 外边距：四周留白20px，与棋盘保持一致间距 */
+  padding: 20px;                             /* 内边距：内容与边框间距20px，与棋盘内边距一致 */
+  background: var(--glass-bg);               /* 背景：使用毛玻璃效果变量，保持风格一致 */
+  backdrop-filter: blur(12px);               /* 背景模糊：毛玻璃效果，模糊度12px，科技感 */
+  border-radius: 20px;                       /* 圆角：圆润的边角20px，与棋盘圆角保持一致 */
+  border: 2px solid var(--glass-border);     /* 边框：2px半透明白色边框，与棋盘边框厚度一致 */
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.15),          /* 外阴影：向下8px，模糊32px，轻微黑色阴影，增加深度 */
+    inset 0 1px 0 rgba(255, 255, 255, 0.2); /* 内阴影：顶部1px白色内发光，增加立体感 */
+  width: 404px;                              /* 固定宽度：404px，与棋盘宽度精确匹配（6×60px + 40px内边距 + 4px边框） */
+  max-width: 404px;                          /* 最大宽度：限制最大宽度，确保尺寸一致性 */
+  position: relative;                        /* 相对定位：为伪元素装饰提供定位基准 */
+  overflow: hidden;                          /* 溢出隐藏：防止装饰元素超出卡片边界 */
+  align-self: flex-start;                    /* 自身对齐：与左侧面板顶部对齐，确保水平对齐 */
+}
+
+/* 游戏规则卡片装饰背景渐变 */
+.game-rules::before {
+  content: '';                               /* 伪元素：必须有content属性才能显示 */
+  position: absolute;                        /* 绝对定位：相对于父容器的绝对位置 */
+  top: 0;                                    /* 定位：贴顶部边缘 */
+  left: 0;                                   /* 定位：贴左边边缘 */
+  right: 0;                                  /* 定位：贴右边边缘 */
+  bottom: 0;                                 /* 定位：贴底部边缘，完全覆盖容器 */
+  background: 
+    radial-gradient(circle at 70% 30%, rgba(79, 172, 254, 0.08) 0%, transparent 60%), /* 径向渐变：右上角蓝色光晕，增加科技感 */
+    radial-gradient(circle at 30% 70%, rgba(245, 87, 108, 0.08) 0%, transparent 60%); /* 径向渐变：左下角粉色光晕，营造温暖感 */
+  pointer-events: none;                      /* 禁用鼠标事件：装饰元素不响应用户交互 */
+}
+
+/* 确保规则内容在装饰层之上 */
+.game-rules > * {
+  position: relative;                        /* 相对定位：确保内容元素在装饰背景之上 */
+  z-index: 1;                               /* 层级：高于装饰背景，确保内容可见 */
+}
+
+/* 游戏规则标题样式 */
+.game-rules h3 {
+  color: white;                              /* 文字颜色：白色，科技感强烈 */
+  margin-bottom: 20px;                       /* 下边距：与规则列表保持20px间距 */
+  font-size: 1.4rem;                         /* 字体大小：1.4倍根字体大小，突出标题重要性 */
+  font-weight: 700;                          /* 字体粗细：粗体，增强视觉重量 */
+  text-align: center;                        /* 文字对齐：居中对齐，平衡美观 */
+  text-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.4),       /* 文字阴影：白色发光效果，增加科技感 */
+    0 2px 4px rgba(0, 0, 0, 0.3);           /* 文字阴影：向下投影，增加立体感 */
+  letter-spacing: 1.5px;                     /* 字符间距：增加字母间距1.5px，提升视觉效果 */
+  background: var(--accent-gradient);        /* 背景：使用强调色渐变 */
+  background-clip: text;                     /* 背景裁剪：仅应用于文字 */
+  -webkit-background-clip: text;             /* WebKit兼容：Safari浏览器支持 */
+  -webkit-text-fill-color: transparent;     /* WebKit文字填充：透明，显示渐变背景 */
+  text-fill-color: transparent;             /* 标准文字填充：透明，未来浏览器支持 */
+  padding-bottom: 15px;                      /* 下内边距：标题与下方内容间距 */
+  border-bottom: 2px solid transparent;      /* 透明底边框：为渐变边框做准备 */
+  border-image: var(--accent-gradient) 1;    /* 边框图像：渐变色边框效果 */
+}
+
+/* 游戏规则列表容器 */
+.game-rules ul {
+  list-style: none;                          /* 列表样式：移除默认的列表项目符号 */
+  padding: 0;                                /* 内边距：重置默认内边距 */
+  margin: 0;                                 /* 外边距：重置默认外边距 */
+  color: rgba(255, 255, 255, 0.95);          /* 文字颜色：接近白色，保持高可读性 */
+}
+
+/* 游戏规则列表项样式 */
+.game-rules li {
+  margin-bottom: 12px;                       /* 下边距：列表项之间的间距12px，保持适度分离 */
+  padding: 12px 16px;                        /* 内边距：上下12px，左右16px，增加点击区域 */
+  background: rgba(0, 0, 0, 0.2);            /* 背景：半透明黑色，增强可读性 */
+  border-radius: 10px;                       /* 圆角：适中圆角10px，现代化设计 */
+  border: 1px solid rgba(255, 255, 255, 0.15); /* 边框：极淡的白色边框，subtle边界定义 */
+  font-size: 14px;                           /* 字体大小：14px，标准的说明文字大小 */
+  line-height: 1.5;                          /* 行高：1.5倍，增加文字的垂直空间，提升可读性 */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); /* 文字阴影：轻微黑色投影，增强文字对比度 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 过渡：平滑的动画效果，贝塞尔曲线 */
+  position: relative;                        /* 相对定位：为悬停效果提供基准 */
+  backdrop-filter: blur(5px);                /* 背景模糊：轻微模糊效果，增强层次感 */
+  overflow: hidden;                          /* 溢出隐藏：隐藏动画效果的溢出部分 */
+}
+
+/* 列表项悬停效果 */
+.game-rules li:hover {
+  transform: translateX(5px);                /* 变换：向右移动5px，提供交互反馈 */
+  background: rgba(79, 172, 254, 0.15);      /* 背景：蓝色半透明背景，增强悬停效果 */
+  border-color: rgba(79, 172, 254, 0.4);     /* 边框颜色：蓝色边框，呼应悬停状态 */
+  box-shadow: 
+    0 4px 20px rgba(79, 172, 254, 0.2),      /* 盒阴影：蓝色发光效果 */
+    inset 0 1px 0 rgba(255, 255, 255, 0.1); /* 内阴影：顶部高光，增加立体感 */
+}
+
+/* 列表项发光动画效果 */
+.game-rules li::before {
+  content: '';                               /* 伪元素：创建动画层 */
+  position: absolute;                        /* 绝对定位：覆盖列表项 */
+  top: 0;                                    /* 定位：贴顶部 */
+  left: -100%;                               /* 初始位置：左侧外部，准备滑入 */
+  width: 100%;                               /* 宽度：与父元素同宽 */
+  height: 100%;                              /* 高度：与父元素同高 */
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    transparent 100%); /* 渐变：透明-白色-透明的扫光效果 */
+  animation: ruleShimmer 4s infinite;        /* 动画：扫光动画，4秒循环，无限重复 */
+}
+
+/* 扫光动画关键帧定义 */
+@keyframes ruleShimmer {
+  0% { left: -100%; }                        /* 起始：左侧外部 */
+  25% { left: 100%; }                        /* 25%：移动到右侧外部 */
+  100% { left: 100%; }                       /* 结束：保持在右侧外部，形成间歇效果 */
+}
+
+/* 响应式设计：平板设备适配 */
+@media (max-width: 768px) {
+  .game-rules {
+    margin: 15px;                            /* 外边距：减少至15px，适配小屏幕 */
+    padding: 15px;                           /* 内边距：减少至15px，节省空间 */
+    width: 100%;                             /* 宽度：100%，适配垂直布局，充分利用屏幕宽度 */
+    max-width: 100%;                         /* 最大宽度：100%，移除固定宽度限制 */
+    align-self: stretch;                     /* 自身对齐：拉伸填满容器宽度 */
+  }
+  
+  .game-rules h3 {
+    font-size: 1.2rem;                       /* 字体大小：减小至1.2倍，适配小屏幕 */
+    margin-bottom: 15px;                     /* 下边距：减少至15px */
+  }
+  
+  .game-rules li {
+    font-size: 13px;                         /* 字体大小：减小至13px，保持可读性 */
+    padding: 10px 12px;                      /* 内边距：减少内边距，节省空间 */
+    margin-bottom: 10px;                     /* 下边距：减少至10px */
+  }
+}
+
+/* 响应式设计：手机设备适配 */
+@media (max-width: 480px) {
+  .game-rules {
+    margin: 10px;                            /* 外边距：进一步减少至10px */
+    padding: 12px;                           /* 内边距：进一步减少至12px */
+    border-radius: 15px;                     /* 圆角：减小圆角，适配小屏幕 */
+    width: 100%;                             /* 宽度：100%，完全适配小屏幕 */
+    max-width: 100%;                         /* 最大宽度：100%，确保完全适配 */
+  }
+  
+  .game-rules h3 {
+    font-size: 1.1rem;                       /* 字体大小：减小至1.1倍 */
+    letter-spacing: 1px;                     /* 字符间距：减少至1px */
+  }
+  
+  .game-rules li {
+    font-size: 12px;                         /* 字体大小：减小至12px */
+    padding: 8px 10px;                       /* 内边距：最小化内边距 */
+    margin-bottom: 8px;                      /* 下边距：减少至8px */
+  }
+  
+  .game-rules li:hover {
+    transform: none;                         /* 变换：移动设备禁用悬停平移效果 */
+  }
+}
+
+/* 响应式设计：超大屏幕适配 - 1400px及以上 */
+@media (min-width: 1400px) {
+  .game-rules {
+    width: 444px;                            /* 宽度：增加至444px，匹配大屏幕下的棋盘宽度 */
+    max-width: 444px;                        /* 最大宽度：对应更大的棋盘尺寸 */
+  }
+} 

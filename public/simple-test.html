@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单联机测试</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #333;
+            color: white;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .btn:hover { background: #0056b3; }
+        .room-id {
+            font-size: 24px;
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background: #444;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 简单联机测试</h1>
+    
+    <div class="room-id">
+        房间ID: <span id="roomId">SIMPLE</span>
+    </div>
+    
+    <div style="text-align: center;">
+        <button class="btn" onclick="openPlayer('大炮玩家')">🔴 打开大炮玩家窗口</button>
+        <button class="btn" onclick="openPlayer('小兵玩家')">🔵 打开小兵玩家窗口</button>
+    </div>
+    
+    <div style="margin-top: 20px;">
+        <h3>测试步骤：</h3>
+        <ol>
+            <li>先点击"打开大炮玩家窗口"</li>
+            <li>在新窗口中输入房间ID: <strong>SIMPLE</strong></li>
+            <li>点击"加入房间"</li>
+            <li>然后点击"打开小兵玩家窗口"</li>
+            <li>在第二个窗口中输入相同的房间ID: <strong>SIMPLE</strong></li>
+            <li>点击"加入房间"</li>
+            <li>确认第一个窗口显示"大炮玩家"，第二个显示"小兵玩家"</li>
+        </ol>
+    </div>
+
+    <script>
+        let windowCount = 0;
+        
+        function openPlayer(playerName) {
+            windowCount++;
+            const width = 900;
+            const height = 700;
+            const left = windowCount === 1 ? 100 : 1000;
+            const top = 100;
+            
+            const url = '/';
+            const windowName = `player_${windowCount}`;
+            const features = `width=${width},height=${height},left=${left},top=${top}`;
+            
+            window.open(url, windowName, features);
+            
+            setTimeout(() => {
+                alert(`${playerName}窗口已打开。请在新窗口中输入房间ID: SIMPLE，然后点击"加入房间"。`);
+            }, 500);
+        }
+    </script>
+</body>
+</html> 

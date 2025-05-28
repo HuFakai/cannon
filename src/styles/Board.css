@@ -1,0 +1,39 @@
+/* 棋盘主容器样式 - 6x6游戏棋盘的核心容器 */
+.board {
+  display: flex;                              /* 弹性布局：启用flexbox，用于排列棋盘行 */
+  flex-direction: column;                     /* 主轴方向：垂直排列，从上到下显示棋盘行 */
+  background: var(--glass-bg);               /* 背景：使用毛玻璃背景色变量，营造透明质感 */
+  backdrop-filter: blur(20px);               /* 背景模糊：20px模糊效果，增强毛玻璃视觉效果 */
+  border: 2px solid var(--glass-border);     /* 边框：2px半透明白色边框，定义棋盘边界 */
+  border-radius: 20px;                       /* 圆角：20px圆润边角，现代化设计风格 */
+  margin: 20px;                              /* 外边距：四周20px留白，与其他元素保持距离 */
+  padding: 20px;                             /* 内边距：内容与边框间距20px，为棋盘提供内部空间 */
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),          /* 外阴影：向下8px，模糊32px，轻微黑色阴影，增加深度感 */
+    inset 0 1px 0 rgba(255, 255, 255, 0.2); /* 内阴影：顶部1px白色内发光，增强立体感和光泽效果 */
+  position: relative;                        /* 相对定位：为装饰背景层提供定位基准 */
+  overflow: hidden;                          /* 溢出隐藏：确保装饰效果不超出棋盘边界 */
+}
+
+/* 棋盘装饰背景层 - 为棋盘添加科技感的光效和渐变装饰 */
+.board::before {
+  content: '';                               /* 伪元素：必须有content属性才能显示 */
+  position: absolute;                        /* 绝对定位：相对于棋盘容器进行定位 */
+  top: 0;                                    /* 定位：贴顶部边缘 */
+  left: 0;                                   /* 定位：贴左边边缘 */
+  right: 0;                                  /* 定位：贴右边边缘 */
+  bottom: 0;                                 /* 定位：贴底部边缘，覆盖整个棋盘区域 */
+  background: 
+    linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%), /* 线性渐变：45度斜向光带效果，营造动态感 */
+    radial-gradient(circle at 20% 80%, rgba(79, 172, 254, 0.2) 0%, transparent 50%),         /* 径向渐变：左下角蓝色光晕，增加色彩层次 */
+    radial-gradient(circle at 80% 20%, rgba(245, 87, 108, 0.2) 0%, transparent 50%);         /* 径向渐变：右上角粉色光晕，平衡色彩布局 */
+  pointer-events: none;                      /* 禁用鼠标事件：装饰层不干扰棋盘的交互功能 */
+}
+
+/* 棋盘行容器样式 - 每一行棋盘格子的容器 */
+.board-row {
+  display: flex;                             /* 弹性布局：水平排列本行的所有棋盘格子 */
+  flex-direction: row;                       /* 主轴方向：水平方向，从左到右排列格子 */
+  position: relative;                        /* 相对定位：确保行内容在装饰背景之上 */
+  z-index: 1;                               /* 层级：高于装饰背景层，确保棋盘格子可见和可交互 */
+} 

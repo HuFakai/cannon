@@ -1,0 +1,337 @@
+/* 游戏信息面板主容器样式 - 左侧控制面板的核心容器 */
+.game-info {
+  margin: 20px;                              /* 外边距：四周留白20px，与其他组件保持一致的间距 */
+  padding: 15px;                             /* 内边距：内容与边框间距15px，紧凑而舒适的内容间距 */
+  background: rgba(0, 0, 0, 0.15);           /* 背景：半透明黑色，透明度提高，减少视觉重量 */
+  backdrop-filter: blur(10px);               /* 背景模糊：毛玻璃效果的关键，模糊度10px，营造科技感 */
+  border-radius: 20px;                       /* 圆角：圆润的边角20px，现代化设计，与整体风格统一 */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* 边框：半透明白色边框，增强毛玻璃质感，降低对比度 */
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.12),          /* 外阴影：向下8px，模糊32px，轻微黑色阴影，增加深度感 */
+    inset 0 1px 0 rgba(255, 255, 255, 0.15); /* 内阴影：顶部1px白色内发光，增加立体感，减少强度 */
+  width: 320px;                              /* 固定宽度：保持面板尺寸一致性，确保布局稳定 */
+  position: relative;                        /* 相对定位：为伪元素提供定位基准 */
+  overflow: hidden;                          /* 溢出隐藏：防止装饰元素超出边界，保持整洁 */
+}
+
+/* 游戏信息面板装饰背景渐变 - 增加视觉层次的装饰效果 */
+.game-info::before {
+  content: '';                               /* 伪元素：必须有content属性才能显示 */
+  position: absolute;                        /* 绝对定位：相对于父容器的绝对位置 */
+  top: 0;                                    /* 定位：贴顶部边缘 */
+  left: 0;                                   /* 定位：贴左边边缘 */
+  right: 0;                                  /* 定位：贴右边边缘 */
+  bottom: 0;                                 /* 定位：贴底部边缘，覆盖整个容器 */
+  background: 
+    radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.08) 0%, transparent 50%), /* 径向渐变：右上角紫蓝色光晕，减少强度 */
+    radial-gradient(circle at 20% 80%, rgba(240, 147, 251, 0.08) 0%, transparent 50%); /* 径向渐变：左下角粉紫色光晕，营造温暖感 */
+  pointer-events: none;                      /* 禁用鼠标事件：装饰元素不响应用户交互 */
+}
+
+/* 确保内容元素在装饰层之上 - 保证内容的可见性和交互性 */
+.game-info > * {
+  position: relative;                        /* 相对定位：确保内容在装饰背景之上 */
+  z-index: 1;                               /* 层级：高于装饰背景，确保内容可见和可交互 */
+}
+
+/* 游戏信息面板标题样式 - 主标题的视觉设计 */
+.game-info h2 {
+  color: white;                              /* 文字颜色：白色，确保在深色背景下的可读性 */
+  text-align: center;                        /* 文字对齐：居中对齐，创造平衡美观的布局 */
+  margin-bottom: 25px;                       /* 下边距：与下方内容保持25px间距，提供呼吸空间 */
+  border-bottom: 2px solid transparent;      /* 透明底边框：为渐变边框效果做准备 */
+  background: var(--accent-gradient);        /* 背景：使用强调色渐变，与整体设计风格保持一致 */
+  background-clip: border-box;               /* 背景裁剪：标准裁剪方式，确保渐变正确显示 */
+  -webkit-background-clip: border-box;       /* WebKit兼容：Safari浏览器兼容性支持 */
+  border-image: var(--accent-gradient) 1;    /* 边框图像：渐变色边框效果，增强视觉冲击力 */
+  padding-bottom: 15px;                      /* 下内边距：文字与边框间距15px，保持文字平衡 */
+  font-size: 1.8rem;                         /* 字体大小：1.8倍根字体大小，突出标题重要性 */
+  font-weight: 600;                          /* 字体粗细：半粗体，增强标题的视觉重量 */
+  letter-spacing: 1px;                       /* 字符间距：增加1px字母间距，提升视觉效果和可读性 */
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.4); /* 文字阴影：白色发光效果，增强科技感 */
+}
+
+/* 游戏状态显示区域 - 当前游戏状态的信息展示 */
+.status {
+  margin-bottom: 20px;                       /* 下边距：与下方元素保持20px间距，保持布局层次 */
+  font-size: 18px;                           /* 字体大小：适中的信息展示字体，确保可读性 */
+  font-weight: 600;                          /* 字体粗细：半粗体，强调重要信息的视觉重量 */
+  color: white;                              /* 文字颜色：白色，在深色背景下提供良好对比度 */
+  text-align: center;                        /* 文字对齐：居中显示，保持视觉平衡 */
+  padding: 12px;                             /* 内边距：内容与边框间距12px，提供舒适的阅读空间 */
+  background: rgba(0, 0, 0, 0.1);            /* 背景：半透明黑色，增强可读性，提供内容分离 */
+  border-radius: 12px;                       /* 圆角：12px圆润边角，与整体设计风格保持一致 */
+  border: 1px solid rgba(255, 255, 255, 0.25); /* 边框：半透明白色边框，增强元素定义 */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* 文字阴影：轻微白色发光，增强文字立体感 */
+  backdrop-filter: blur(10px);               /* 背景模糊：毛玻璃效果，与主容器保持一致的视觉风格 */
+}
+
+/* 游戏结束状态特殊样式 - 游戏结束时的特殊视觉效果 */
+.game-over {
+  background: var(--warning-gradient);       /* 背景：警告色渐变，突出游戏结束状态 */
+  color: white;                              /* 文字颜色：白色，确保在彩色背景下的对比度 */
+  text-align: center;                        /* 文字对齐：居中对齐，强调重要信息 */
+  animation: gameOverGlow 1s ease-in;        /* 动画：游戏结束发光动画，1秒缓入效果 */
+  box-shadow: 0 0 30px rgba(255, 154, 158, 0.5); /* 盒阴影：粉红色发光效果，增强视觉冲击 */
+}
+
+/* 游戏结束发光动画关键帧 - 定义游戏结束时的动画效果 */
+@keyframes gameOverGlow {
+  0% {
+    opacity: 0;                              /* 起始：完全透明，创造淡入效果 */
+    transform: scale(0.8);                   /* 起始：缩小至80%，创造缩放进入效果 */
+  }
+  100% {
+    opacity: 1;                              /* 结束：完全不透明，完成淡入 */
+    transform: scale(1);                     /* 结束：正常大小，完成缩放 */
+  }
+}
+
+/* 棋子数量统计容器 - 显示当前棋子数量的统计信息 */
+.pieces-count {
+  display: flex;                             /* 弹性布局：水平排列棋子统计信息 */
+  justify-content: space-between;            /* 对齐方式：两端对齐，充分利用空间 */
+  margin: 20px 0;                            /* 上下边距：与其他元素保持20px间距 */
+  gap: 15px;                                 /* 间距：子元素间距15px，保持适当分离 */
+}
+
+/* 棋子数量统计单项样式 - 单个棋子数量显示的样式 */
+.pieces-count p {
+  margin: 0;                                 /* 外边距：重置默认边距，避免不必要的空间 */
+  padding: 12px 16px;                        /* 内边距：上下12px，左右16px，提供舒适的内容空间 */
+  border-radius: 20px;                       /* 圆角：较大圆角20px，现代化设计风格 */
+  font-size: 16px;                           /* 字体大小：适中的数据展示字体，确保可读性 */
+  font-weight: 600;                          /* 字体粗细：半粗体，强调数据的重要性 */
+  flex: 1;                                   /* 弹性：平均分配空间，确保统计项等宽 */
+  text-align: center;                        /* 文字对齐：居中对齐，保持视觉平衡 */
+  position: relative;                        /* 相对定位：为动画效果提供定位基准 */
+  overflow: hidden;                          /* 溢出隐藏：隐藏动画超出部分，保持整洁 */
+  color: white;                              /* 文字颜色：白色，确保可读性 */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* 文字阴影：轻微发光效果，增强文字立体感 */
+}
+
+/* 棋子数量统计闪光动画效果 - 为统计项添加动态视觉效果 */
+.pieces-count p::before {
+  content: '';                               /* 伪元素：创建动画层 */
+  position: absolute;                        /* 绝对定位：覆盖父元素 */
+  top: 0;                                    /* 定位：贴顶部 */
+  left: -100%;                               /* 初始位置：左侧外部，准备滑入 */
+  width: 100%;                               /* 宽度：与父元素同宽 */
+  height: 100%;                              /* 高度：与父元素同高 */
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); /* 渐变：透明-白色-透明的闪光效果 */
+  animation: slideShimmer 3s infinite;       /* 动画：滑动闪光效果，3秒循环，无限重复 */
+}
+
+/* 滑动闪光动画关键帧 - 定义闪光动画的运动轨迹 */
+@keyframes slideShimmer {
+  0% { left: -100%; }                        /* 起始：左侧外部 */
+  100% { left: 100%; }                       /* 结束：右侧外部，创造横向扫过效果 */
+}
+
+/* 大炮数量统计样式（第一个统计项） */
+.pieces-count p:first-child {
+  background: var(--secondary-gradient);     /* 背景：次要渐变色（粉红色系），区分棋子类型 */
+  box-shadow: 0 4px 20px rgba(245, 87, 108, 0.25); /* 盒阴影：粉红色发光，降低强度，保持精致 */
+}
+
+/* 小兵数量统计样式（第二个统计项） */
+.pieces-count p:last-child {
+  background: var(--accent-gradient);        /* 背景：强调渐变色（蓝色系），与大炮形成对比 */
+  box-shadow: 0 4px 20px rgba(79, 172, 254, 0.25); /* 盒阴影：蓝色发光，与大炮统计形成视觉平衡 */
+}
+
+/* 重新开始和联机对战按钮通用样式 - 所有行动按钮的基础样式 */
+.restart-button, .online-button {
+  background: var(--primary-gradient);       /* 背景：主要渐变色，保持与主题一致 */
+  color: white;                              /* 文字颜色：白色，确保在彩色背景下的可读性 */
+  border: none;                              /* 边框：无边框，现代扁平化设计 */
+  padding: 15px 20px;                        /* 内边距：上下15px，左右20px，提供舒适的点击区域 */
+  font-size: 16px;                           /* 字体大小：标准按钮字体，确保可读性 */
+  font-weight: 600;                          /* 字体粗细：半粗体，强调按钮重要性 */
+  cursor: pointer;                           /* 鼠标样式：手型指针，提示可点击交互 */
+  border-radius: 12px;                       /* 圆角：适中圆角12px，现代化设计 */
+  width: 100%;                               /* 宽度：占满容器宽度，保持一致的视觉体验 */
+  margin: 10px 0;                            /* 上下边距：与其他元素保持10px间距 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 过渡：平滑动画效果，使用贝塞尔曲线 */
+  position: relative;                        /* 相对定位：为动画效果提供基准 */
+  overflow: hidden;                          /* 溢出隐藏：隐藏动画超出部分 */
+  text-transform: uppercase;                 /* 文字转换：大写字母，增强按钮的权威感 */
+  letter-spacing: 1px;                       /* 字符间距：增加1px间距，提升视觉效果 */
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.25); /* 盒阴影：紫色发光效果，降低强度 */
+}
+
+/* 按钮悬停光效动画 - 为按钮添加交互时的光效 */
+.restart-button::before, .online-button::before {
+  content: '';                               /* 伪元素：创建光效层 */
+  position: absolute;                        /* 绝对定位：覆盖按钮 */
+  top: 0;                                    /* 定位：贴顶部 */
+  left: -100%;                               /* 初始位置：左侧外部，准备滑入 */
+  width: 100%;                               /* 宽度：与按钮同宽 */
+  height: 100%;                              /* 高度：与按钮同高 */
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); /* 渐变光效：创造扫光效果 */
+  transition: left 0.5s;                     /* 过渡：光效移动动画，0.5秒持续时间 */
+}
+
+/* 按钮悬停状态 - 鼠标悬停时的视觉反馈 */
+.restart-button:hover, .online-button:hover {
+  transform: translateY(-2px);               /* 变换：向上移动2px，创造悬浮效果 */
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4); /* 盒阴影：增强发光效果，提供深度感 */
+}
+
+/* 按钮悬停时的光效触发 - 激活扫光动画 */
+.restart-button:hover::before, .online-button:hover::before {
+  left: 100%;                                /* 光效：从左滑动到右，创造扫光效果 */
+}
+
+/* 按钮按下状态 - 点击时的视觉反馈 */
+.restart-button:active, .online-button:active {
+  transform: translateY(0);                  /* 变换：回到原位，提供按下反馈 */
+}
+
+/* 联机对战区域容器 - 联机功能的专用区域 */
+.online-section {
+  margin: 20px 0;                            /* 上下边距：与其他元素保持20px间距 */
+  padding: 20px;                             /* 内边距：内容与边框间距20px，提供充足空间 */
+  background: rgba(0, 0, 0, 0.2);            /* 背景：半透明黑色，区域划分，增强透明度 */
+  border-radius: 15px;                       /* 圆角：适中圆角15px，与整体风格保持一致 */
+  border: 1px solid rgba(255, 255, 255, 0.15); /* 边框：轻微白色边框，subtle边界定义 */
+  backdrop-filter: blur(10px);               /* 背景模糊：毛玻璃效果，保持视觉一致性 */
+}
+
+/* 联机区域标题 - 联机功能区域的标题样式 */
+.online-section h3 {
+  color: white;                              /* 文字颜色：白色，确保可读性 */
+  margin-bottom: 15px;                       /* 下边距：与下方内容保持15px间距 */
+  font-size: 1.2rem;                         /* 字体大小：适中的副标题字体 */
+  text-align: center;                        /* 文字对齐：居中对齐，保持视觉平衡 */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* 文字阴影：轻微发光效果 */
+}
+
+/* 房间ID输入框 - 用户输入房间ID的输入控件 */
+.room-input {
+  width: 100%;                               /* 宽度：占满容器宽度，保持一致性 */
+  padding: 12px;                             /* 内边距：内容与边框间距12px，提供舒适输入空间 */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* 边框：半透明白色边框，增强输入框定义 */
+  border-radius: 8px;                        /* 圆角：适中圆角8px，现代化输入框设计 */
+  background: rgba(0, 0, 0, 0.3);            /* 背景：半透明黑色，增强可读性 */
+  color: white;                              /* 文字颜色：白色，确保输入文字可见 */
+  font-size: 14px;                           /* 字体大小：标准输入框字体，保证可读性 */
+  margin-bottom: 10px;                       /* 下边距：与下方元素保持10px间距 */
+  backdrop-filter: blur(10px);               /* 背景模糊：毛玻璃效果，保持视觉一致性 */
+}
+
+/* 输入框占位符文字样式 - 输入框提示文字的样式 */
+.room-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);           /* 占位符颜色：半透明白色，提供引导但不干扰 */
+}
+
+/* 输入框聚焦状态 - 用户聚焦输入框时的视觉反馈 */
+.room-input:focus {
+  outline: none;                             /* 轮廓：移除默认聚焦轮廓，使用自定义样式 */
+  border-color: rgba(79, 172, 254, 0.6);     /* 边框颜色：蓝色强调色，表示活跃状态 */
+  box-shadow: 0 0 10px rgba(79, 172, 254, 0.3); /* 盒阴影：蓝色发光效果，增强聚焦反馈 */
+}
+
+/* 连接状态指示器通用样式 - 显示连接状态的通用样式 */
+.connection-status {
+  padding: 8px 12px;                         /* 内边距：紧凑的状态指示器间距 */
+  border-radius: 8px;                        /* 圆角：适中圆角8px，现代化设计 */
+  font-size: 14px;                           /* 字体大小：较小的状态字体，不抢夺主要内容焦点 */
+  text-align: center;                        /* 文字对齐：居中对齐，保持信息整齐 */
+  margin: 10px 0;                            /* 上下边距：与其他元素保持10px间距 */
+  font-weight: 600;                          /* 字体粗细：半粗体，强调状态重要性 */
+}
+
+/* 已连接状态样式 - 成功连接时的视觉状态 */
+.status-connected {
+  background: var(--success-gradient);       /* 背景：成功色渐变（绿色系），表示正常状态 */
+  color: white;                              /* 文字颜色：白色，确保对比度 */
+  box-shadow: 0 0 20px rgba(86, 171, 47, 0.25); /* 盒阴影：绿色发光效果，降低强度 */
+}
+
+/* 已断开连接状态样式 - 连接断开时的警告状态 */
+.status-disconnected {
+  background: var(--warning-gradient);       /* 背景：警告色渐变（红色系），表示错误状态 */
+  color: white;                              /* 文字颜色：白色，确保警告信息可读 */
+  box-shadow: 0 0 20px rgba(255, 154, 158, 0.25); /* 盒阴影：红色发光效果，表示警告 */
+}
+
+/* 连接中状态样式 - 正在建立连接时的过渡状态 */
+.status-connecting {
+  background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%); /* 背景：橙色渐变，表示进行中状态 */
+  color: white;                              /* 文字颜色：白色，确保可读性 */
+  box-shadow: 0 0 20px rgba(255, 165, 0, 0.25); /* 盒阴影：橙色发光效果，表示活动状态 */
+  animation: connecting 1.5s infinite;       /* 动画：连接中脉冲动画，1.5秒循环 */
+}
+
+/* 连接中脉冲动画关键帧 - 定义连接中的呼吸动画 */
+@keyframes connecting {
+  0%, 100% { opacity: 0.8; }                 /* 起始和结束：80%透明度 */
+  50% { opacity: 1; }                        /* 中间：100%透明度，形成脉冲效果 */
+}
+
+/* 平板设备响应式设计 - 768px及以下设备适配 */
+@media (max-width: 768px) {
+  .game-info {
+    margin: 15px;                            /* 外边距：减少至15px，适配小屏幕 */
+    padding: 12px;                           /* 内边距：减少至12px，节省空间 */
+    width: 100%;                             /* 宽度：100%，充分利用屏幕宽度 */
+    max-width: 500px;                        /* 最大宽度：限制最大宽度，保持可读性 */
+  }
+  
+  .game-info h2 {
+    font-size: 1.6rem;                       /* 字体大小：减小至1.6倍，适配小屏幕 */
+    margin-bottom: 20px;                     /* 下边距：减少至20px */
+  }
+  
+  .pieces-count {
+    gap: 10px;                               /* 间距：减少至10px，紧凑布局 */
+  }
+  
+  .pieces-count p {
+    font-size: 14px;                         /* 字体大小：减小至14px，保持可读性 */
+    padding: 10px 12px;                      /* 内边距：减少内边距，节省空间 */
+  }
+}
+
+/* 手机设备响应式设计 - 480px及以下设备适配 */
+@media (max-width: 480px) {
+  .game-info {
+    margin: 10px;                            /* 外边距：进一步减少至10px */
+    padding: 10px;                           /* 内边距：进一步减少至10px */
+    border-radius: 15px;                     /* 圆角：减小圆角，适配小屏幕 */
+  }
+  
+  .game-info h2 {
+    font-size: 1.4rem;                       /* 字体大小：减小至1.4倍 */
+    letter-spacing: 0.5px;                   /* 字符间距：减少至0.5px */
+  }
+  
+  .status {
+    font-size: 16px;                         /* 字体大小：减小至16px */
+    padding: 10px;                           /* 内边距：减少至10px */
+  }
+  
+  .pieces-count {
+    gap: 8px;                                /* 间距：减少至8px，最小化间距 */
+  }
+  
+  .pieces-count p {
+    font-size: 13px;                         /* 字体大小：减小至13px */
+    padding: 8px 10px;                       /* 内边距：最小化内边距 */
+  }
+  
+  .restart-button, .online-button {
+    padding: 12px 16px;                      /* 内边距：减少按钮内边距 */
+    font-size: 14px;                         /* 字体大小：减小按钮字体 */
+  }
+  
+  .online-section {
+    padding: 15px;                           /* 内边距：减少联机区域内边距 */
+  }
+  
+  .room-input {
+    font-size: 13px;                         /* 字体大小：减小输入框字体 */
+    padding: 10px;                           /* 内边距：减少输入框内边距 */
+  }
+} 

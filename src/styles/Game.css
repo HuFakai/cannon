@@ -1,0 +1,154 @@
+/* 游戏主容器样式 - 整个游戏界面的最外层容器 */
+.game {
+  display: flex;                              /* 弹性布局：启用flexbox布局系统 */
+  flex-direction: row;                        /* 主轴方向：水平排列，左右布局 */
+  justify-content: center;                    /* 主轴对齐：居中对齐，保持整体平衡 */
+  align-items: flex-start;                    /* 交叉轴对齐：顶部对齐，避免高度不一致问题 */
+  padding: 30px;                              /* 内边距：四周30px留白，提供呼吸空间 */
+  max-width: 1600px;                          /* 最大宽度：限制容器最大宽度1600px，适配大屏幕 */
+  margin: 0 auto;                             /* 外边距：水平居中对齐，垂直无边距 */
+  gap: 40px;                                  /* 间距：子元素间距40px，保持适当分离 */
+  position: relative;                         /* 相对定位：为装饰元素提供定位基准 */
+  min-height: 100vh;                          /* 最小高度：100%视口高度，确保全屏显示 */
+}
+
+/* 游戏主容器装饰背景渐变 */
+.game::before {
+  content: '';                               /* 伪元素：必须有content属性才能显示 */
+  position: absolute;                        /* 绝对定位：相对于父容器定位 */
+  top: 0;                                    /* 定位：贴顶部边缘 */
+  left: 0;                                   /* 定位：贴左边边缘 */
+  right: 0;                                  /* 定位：贴右边边缘 */
+  bottom: 0;                                 /* 定位：贴底部边缘，覆盖整个容器 */
+  background: 
+    radial-gradient(circle at 25% 75%, rgba(102, 126, 234, 0.12) 0%, transparent 50%), /* 径向渐变：左下角紫蓝色光晕，营造科技氛围 */
+    radial-gradient(circle at 75% 25%, rgba(240, 147, 251, 0.12) 0%, transparent 50%), /* 径向渐变：右上角粉紫色光晕，增加色彩层次 */
+    radial-gradient(circle at 50% 50%, rgba(79, 172, 254, 0.05) 0%, transparent 70%);  /* 径向渐变：中心蓝色光晕，提供整体统一感 */
+  pointer-events: none;                      /* 禁用鼠标事件：装饰元素不干扰用户交互 */
+  border-radius: 25px;                       /* 圆角：与主容器保持一致的圆角风格 */
+  z-index: 0;                               /* 层级：最底层，确保在所有内容之下 */
+}
+
+/* 确保所有直接子元素在装饰层之上 */
+.game > * {
+  position: relative;                        /* 相对定位：确保内容在装饰背景之上 */
+  z-index: 1;                               /* 层级：高于装饰背景 */
+}
+
+/* 左侧面板容器 - 包含游戏信息和控制面板 */
+.game-left-panel {
+  flex: 0 0 380px;                           /* 弹性：不伸缩，固定宽度380px，保持左侧面板稳定 */
+  display: flex;                             /* 弹性布局：为内部内容启用flexbox */
+  flex-direction: column;                    /* 主轴方向：垂直排列，上下布局 */
+  min-height: 100%;                          /* 最小高度：100%，确保充满可用空间 */
+}
+
+/* 主内容区域 - 包含棋盘和游戏规则 */
+.game-main-content {
+  flex: 1;                                   /* 弹性：占据剩余空间，自适应宽度 */
+  display: flex;                             /* 弹性布局：为内部内容启用flexbox */
+  flex-direction: column;                    /* 主轴方向：垂直排列，棋盘在上，规则在下 */
+  align-items: center;                       /* 交叉轴对齐：居中对齐，保持棋盘居中 */
+  justify-content: flex-start;               /* 主轴对齐：顶部对齐，确保与左侧面板顶部对齐 */
+  gap: 30px;                                 /* 间距：棋盘与规则间距30px，保持适当分离 */
+  min-width: 0;                              /* 最小宽度：0，允许flex收缩，防止溢出 */
+}
+
+/* 平板设备响应式设计 - 768px及以下 */
+@media (max-width: 768px) {
+  .game {
+    flex-direction: column;                  /* 主轴方向：改为垂直排列，适配窄屏幕 */
+    align-items: center;                     /* 交叉轴对齐：居中对齐，保持美观 */
+    padding: 20px;                           /* 内边距：减少至20px，节省空间 */
+    gap: 25px;                               /* 间距：减少至25px，紧凑布局 */
+    max-width: 100%;                         /* 最大宽度：100%，充分利用屏幕宽度 */
+  }
+  
+  .game-left-panel {
+    flex: none;                              /* 弹性：重置flex属性，恢复默认行为 */
+    width: 100%;                             /* 宽度：100%，占满容器宽度 */
+    max-width: 500px;                        /* 最大宽度：限制最大宽度，保持可读性 */
+  }
+  
+  .game-main-content {
+    width: 100%;                             /* 宽度：100%，占满容器宽度 */
+    gap: 20px;                               /* 间距：减少至20px，紧凑布局 */
+  }
+}
+
+/* 手机设备响应式设计 - 480px及以下 */
+@media (max-width: 480px) {
+  .game {
+    padding: 15px;                           /* 内边距：进一步减少至15px，最大化可用空间 */
+    gap: 20px;                               /* 间距：减少至20px，更紧凑的布局 */
+  }
+  
+  .game-left-panel {
+    max-width: 100%;                         /* 最大宽度：100%，完全适配小屏幕 */
+  }
+  
+  .game-main-content {
+    gap: 15px;                               /* 间距：减少至15px，最小化间距 */
+  }
+}
+
+/* 超大屏幕优化 - 1400px及以上 */
+@media (min-width: 1400px) {
+  .game {
+    max-width: 1800px;                       /* 最大宽度：增加至1800px，充分利用大屏幕 */
+    gap: 50px;                               /* 间距：增加至50px，更宽松的布局 */
+  }
+  
+  .game-left-panel {
+    flex: 0 0 420px;                         /* 弹性：增加宽度至420px，提供更多空间 */
+  }
+  
+  .game-main-content {
+    gap: 40px;                               /* 间距：增加至40px，更好的视觉分离 */
+  }
+}
+
+/* 高度较小屏幕的特殊处理 */
+@media (max-height: 700px) {
+  .game {
+    min-height: auto;                        /* 最小高度：自动，避免过度拉伸 */
+    padding: 20px;                           /* 内边距：减少至20px，节省垂直空间 */
+  }
+  
+  .game-main-content {
+    gap: 20px;                               /* 间距：减少至20px，紧凑垂直布局 */
+  }
+}
+
+/* 高分辨率显示器优化 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .game::before {
+    background: 
+      radial-gradient(circle at 25% 75%, rgba(102, 126, 234, 0.15) 0%, transparent 45%), /* 高DPI：增强渐变强度，提升视觉效果 */
+      radial-gradient(circle at 75% 25%, rgba(240, 147, 251, 0.15) 0%, transparent 45%), /* 高DPI：增强色彩饱和度 */
+      radial-gradient(circle at 50% 50%, rgba(79, 172, 254, 0.08) 0%, transparent 65%);  /* 高DPI：优化渐变范围 */
+  }
+}
+
+/* 深色模式支持（如果系统支持） */
+@media (prefers-color-scheme: dark) {
+  .game::before {
+    background: 
+      radial-gradient(circle at 25% 75%, rgba(102, 126, 234, 0.18) 0%, transparent 50%), /* 深色模式：增强渐变对比度 */
+      radial-gradient(circle at 75% 25%, rgba(240, 147, 251, 0.18) 0%, transparent 50%), /* 深色模式：提升色彩亮度 */
+      radial-gradient(circle at 50% 50%, rgba(79, 172, 254, 0.08) 0%, transparent 70%);  /* 深色模式：保持中心光晕 */
+  }
+}
+
+/* 减少动画效果的用户偏好支持 */
+@media (prefers-reduced-motion: reduce) {
+  .game::before {
+    animation: none;                         /* 动画：禁用所有动画效果，提升可访问性 */
+  }
+  
+  .game * {
+    animation-duration: 0.01ms !important;   /* 动画时长：极短时间，几乎无动画 */
+    animation-iteration-count: 1 !important; /* 动画次数：仅播放一次 */
+    transition-duration: 0.01ms !important;  /* 过渡时长：极短过渡时间 */
+  }
+} 

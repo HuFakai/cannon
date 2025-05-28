@@ -1,13 +1,21 @@
+/* 全局body样式 - 整个网页的基础样式设置 */
 body {
-  margin: 0;
+  margin: 0;                                  /* 外边距：重置所有默认边距，避免浏览器默认样式干扰 */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    sans-serif;                               /* 字体族：系统字体栈，确保在各操作系统下都有最佳字体显示 */
+  -webkit-font-smoothing: antialiased;        /* WebKit字体平滑：反锯齿渲染，提升文字清晰度 */
+  -moz-osx-font-smoothing: grayscale;         /* Firefox字体平滑：灰度渲染，提升macOS下文字质量 */
+  background-color: #f8f9fa;                  /* 背景颜色：浅灰白色，提供干净的基础背景（将被App.css覆盖） */
 }
 
+/* 代码元素样式 - 内联代码和代码块的字体设置 */
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    monospace;                                /* 字体族：等宽字体栈，确保代码显示整齐对齐 */
+}
+
+/* 全局盒模型设置 - 统一所有元素的盒模型计算方式 */
+* {
+  box-sizing: border-box;                     /* 盒模型：边框盒模型，内边距和边框包含在宽高内，便于布局计算 */
 }

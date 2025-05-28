@@ -1,38 +1,68 @@
+/* 应用程序主容器样式 - 整个React应用的根容器 */
 .App {
-  text-align: center;
+  text-align: center;                         /* 文字对齐：全局居中对齐，保持整体一致性 */
+  min-height: 100vh;                          /* 最小高度：100%视口高度，确保全屏覆盖 */
+  display: flex;                              /* 弹性布局：启用flexbox，便于子元素排列 */
+  flex-direction: column;                     /* 主轴方向：垂直排列，头部-主要内容-底部结构 */
+  background-color: #f8f9fa;                  /* 背景颜色：浅灰白色，提供干净的基础背景 */
 }
 
+/* 应用程序Logo样式 - 品牌标识图标 */
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+  height: 40vmin;                             /* 高度：40%视口最小尺寸，响应式Logo大小 */
+  pointer-events: none;                       /* 鼠标事件：禁用指针事件，Logo仅作装饰用 */
 }
 
+/* Logo旋转动画 - 仅在用户偏好允许动画时启用 */
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: App-logo-spin infinite 20s linear; /* 动画：无限旋转，20秒一圈，线性速度 */
   }
 }
 
+/* 应用程序头部样式 - 顶部导航和标题区域 */
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  background-color: #264653;                  /* 背景颜色：深青绿色，营造专业科技感 */
+  padding: 20px;                              /* 内边距：四周20px，提供舒适的内容间距 */
+  color: white;                               /* 文字颜色：白色，与深色背景形成高对比度 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);  /* 盒阴影：向下投影，增加头部的层次感和深度 */
 }
 
+/* 头部标题样式 - 主要应用程序标题 */
+.App-header h1 {
+  margin: 0;                                  /* 外边距：重置默认边距，避免不必要的空间 */
+  font-size: 2rem;                            /* 字体大小：2倍根字体大小，突出标题重要性 */
+}
+
+/* 主要内容区域样式 - 应用程序的核心内容容器 */
+main {
+  flex: 1;                                    /* 弹性：占据剩余空间，确保内容区域最大化 */
+  display: flex;                              /* 弹性布局：为内容排列提供灵活性 */
+  justify-content: center;                    /* 主轴对齐：水平居中，保持内容居中显示 */
+  align-items: center;                        /* 交叉轴对齐：垂直居中，创造平衡布局 */
+  padding: 20px;                              /* 内边距：四周20px，为内容提供呼吸空间 */
+}
+
+/* 应用程序底部样式 - 页脚信息区域 */
+.App-footer {
+  background-color: #264653;                  /* 背景颜色：与头部保持一致的深青绿色 */
+  color: white;                               /* 文字颜色：白色，确保可读性 */
+  padding: 10px;                              /* 内边距：较小的10px，紧凑的底部设计 */
+  font-size: 0.8rem;                          /* 字体大小：0.8倍根字体，较小的辅助信息字体 */
+  margin-top: auto;                           /* 上边距：自动，推送到页面底部 */
+}
+
+/* 应用程序链接样式 - 特殊链接的样式定义 */
 .App-link {
-  color: #61dafb;
+  color: #61dafb;                             /* 链接颜色：React品牌蓝色，保持品牌一致性 */
 }
 
+/* Logo旋转动画关键帧定义 - 定义Logo的旋转动画效果 */
 @keyframes App-logo-spin {
   from {
-    transform: rotate(0deg);
+    transform: rotate(0deg);                  /* 起始：0度旋转，动画开始位置 */
   }
   to {
-    transform: rotate(360deg);
+    transform: rotate(360deg);                /* 结束：360度旋转，完成一圈旋转 */
   }
 }

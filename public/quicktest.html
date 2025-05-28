@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速联机测试</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .step {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+            backdrop-filter: blur(10px);
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .warning {
+            background: rgba(255, 193, 7, 0.2);
+            border-left-color: #FFC107;
+            color: #FFC107;
+        }
+        .success {
+            background: rgba(76, 175, 80, 0.2);
+            border-left-color: #4CAF50;
+            color: #4CAF50;
+        }
+        .code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .room-id {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            letter-spacing: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center;">🎮 炮与兵棋联机测试</h1>
+        
+        <div class="room-id">
+            测试房间ID: <span id="roomId">TEST01</span>
+            <button class="btn" onclick="generateRoomId()" style="margin-left: 20px; padding: 5px 15px; font-size: 14px;">生成新ID</button>
+        </div>
+
+        <div class="step success">
+            <h3>✅ 第一步：打开第一个游戏窗口</h3>
+            <p>点击下面的按钮打开第一个游戏窗口（大炮玩家）：</p>
+            <a href="javascript:void(0)" class="btn" onclick="openPlayer1()">🔴 打开玩家1 (大炮)</a>
+        </div>
+
+        <div class="step success">
+            <h3>✅ 第二步：打开第二个游戏窗口</h3>
+            <p>等待3秒后，点击下面的按钮打开第二个游戏窗口（小兵玩家）：</p>
+            <a href="javascript:void(0)" class="btn" onclick="openPlayer2()">🔵 打开玩家2 (小兵)</a>
+        </div>
+
+        <div class="step">
+            <h3>🎯 第三步：在两个窗口中加入房间</h3>
+            <p>在两个游戏窗口中：</p>
+            <ol>
+                <li>确保房间ID都是：<strong><span id="roomId2">TEST01</span></strong></li>
+                <li>点击"加入房间"按钮</li>
+                <li>等待显示"玩家: 2/2"</li>
+                <li>自动开始游戏</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>🎮 第四步：测试游戏同步</h3>
+            <p>现在可以测试联机功能：</p>
+            <ol>
+                <li>大炮玩家（红色棋子）先手移动</li>
+                <li>观察小兵玩家窗口是否实时更新</li>
+                <li>然后小兵玩家（蓝色棋子）移动</li>
+                <li>观察大炮玩家窗口是否实时更新</li>
+            </ol>
+        </div>
+
+        <div class="step warning">
+            <h3>⚠️ 重要提示</h3>
+            <ul>
+                <li>两个窗口必须使用<strong>相同的房间ID</strong></li>
+                <li>第一个加入的玩家是大炮玩家（红色）</li>
+                <li>第二个加入的玩家是小兵玩家（蓝色）</li>
+                <li>只有轮到自己回合时才能移动棋子</li>
+                <li>如果遇到问题，请查看浏览器控制台日志</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/debug.html" class="btn">🔧 高级调试工具</a>
+            <a href="/test.html" class="btn">📖 详细说明</a>
+        </div>
+    </div>
+
+    <script>
+        let roomId = 'TEST01';
+        
+        function generateRoomId() {
+            roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('roomId').textContent = roomId;
+            document.getElementById('roomId2').textContent = roomId;
+        }
+        
+        function openPlayer1() {
+            const url = `/?room=${roomId}&player=1`;
+            window.open(url, 'player1', 'width=800,height=600,left=100,top=100');
+            
+            // 显示提示
+            setTimeout(() => {
+                alert('第一个窗口已打开。请在3秒后点击"打开玩家2"按钮。');
+            }, 500);
+        }
+        
+        function openPlayer2() {
+            const url = `/?room=${roomId}&player=2`;
+            window.open(url, 'player2', 'width=800,height=600,left=950,top=100');
+            
+            // 显示提示
+            setTimeout(() => {
+                alert(`两个窗口已打开。请在两个窗口中都输入房间ID: ${roomId}，然后点击"加入房间"。`);
+            }, 500);
+        }
+        
+        // 页面加载时随机生成房间ID
+        window.onload = () => {
+            generateRoomId();
+        };
+    </script>
+</body>
+</html> 

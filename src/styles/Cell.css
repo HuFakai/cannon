@@ -1,0 +1,146 @@
+/* 棋盘格子基础样式 - 6x6棋盘中每个单独格子的基础外观 */
+.cell {
+  width: 60px;                                /* 宽度：固定60px，确保所有格子尺寸一致 */
+  height: 60px;                               /* 高度：固定60px，形成正方形格子 */
+  border: 1px solid rgba(255, 255, 255, 0.4); /* 边框：半透明白色1px边框，定义格子边界 */
+  display: flex;                              /* 弹性布局：用于居中显示格子内的棋子 */
+  justify-content: center;                    /* 主轴对齐：水平居中对齐棋子 */
+  align-items: center;                        /* 交叉轴对齐：垂直居中对齐棋子 */
+  cursor: pointer;                            /* 鼠标样式：手型指针，提示格子可点击 */
+  position: relative;                         /* 相对定位：为伪元素和棋子提供定位基准 */
+  background: rgba(0, 0, 0, 0.3);             /* 背景：半透明黑色，提供适度的对比度 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 过渡：平滑动画效果，使用贝塞尔曲线 */
+  overflow: hidden;                           /* 溢出隐藏：确保装饰效果不超出格子边界 */
+  backdrop-filter: blur(5px);                 /* 背景模糊：轻微毛玻璃效果，增强视觉层次 */
+}
+
+/* 格子悬停光效装饰 - 为格子添加交互时的光效反馈 */
+.cell::before {
+  content: '';                               /* 伪元素：创建光效装饰层 */
+  position: absolute;                        /* 绝对定位：覆盖整个格子 */
+  top: 0;                                    /* 定位：贴顶部边缘 */
+  left: 0;                                   /* 定位：贴左边边缘 */
+  right: 0;                                  /* 定位：贴右边边缘 */
+  bottom: 0;                                 /* 定位：贴底部边缘 */
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent); /* 渐变：45度斜向光带效果 */
+  opacity: 0;                                /* 透明度：初始状态隐藏，悬停时显示 */
+  transition: opacity 0.3s ease;             /* 过渡：透明度变化动画，平滑显示隐藏 */
+}
+
+/* 格子悬停状态 - 鼠标悬停时的视觉反馈效果 */
+.cell:hover {
+  background: rgba(255, 255, 255, 0.2);      /* 背景：半透明白色，提亮格子背景 */
+  border-color: rgba(255, 255, 255, 0.6);    /* 边框颜色：增强边框对比度 */
+  transform: scale(1.05);                     /* 变换：轻微放大105%，提供悬浮反馈 */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* 盒阴影：向下投影，增加悬浮深度感 */
+}
+
+/* 悬停时激活光效 - 显示格子的光效装饰 */
+.cell:hover::before {
+  opacity: 1;                                /* 透明度：完全显示光效装饰 */
+}
+
+/* 有效移动位置样式 - 标记可以移动到的格子 */
+.valid-move {
+  background: var(--accent-gradient);        /* 背景：使用强调色渐变，突出显示可移动位置 */
+  border-color: rgba(79, 172, 254, 0.8);     /* 边框颜色：蓝色高对比度边框 */
+  box-shadow: 0 0 20px rgba(79, 172, 254, 0.3); /* 盒阴影：蓝色发光效果，吸引玩家注意 */
+  animation: pulse 2s infinite;               /* 动画：脉冲动画，2秒循环，持续提示 */
+}
+
+/* 有效移动位置悬停状态 - 增强可移动格子的交互反馈 */
+.valid-move:hover {
+  background: var(--accent-gradient);        /* 背景：保持强调色渐变 */
+  transform: scale(1.1);                     /* 变换：放大至110%，更强的悬浮效果 */
+  box-shadow: 0 0 30px rgba(79, 172, 254, 0.5); /* 盒阴影：增强发光效果 */
+}
+
+/* 脉冲动画关键帧 - 定义有效移动位置的呼吸动画 */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(79, 172, 254, 0.3); /* 起始和结束：正常发光强度 */
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(79, 172, 254, 0.6); /* 中间：增强发光强度，形成脉冲效果 */
+  }
+}
+
+/* 棋子基础样式 - 所有棋子的通用外观设计 */
+.piece {
+  width: 80%;                                /* 宽度：格子的80%，留出适当边距 */
+  height: 80%;                               /* 高度：格子的80%，保持比例协调 */
+  border-radius: 50%;                        /* 圆角：50%形成完美圆形棋子 */
+  display: flex;                             /* 弹性布局：用于居中显示棋子内容 */
+  justify-content: center;                   /* 主轴对齐：水平居中对齐文字或图标 */
+  align-items: center;                       /* 交叉轴对齐：垂直居中对齐文字或图标 */
+  font-size: 24px;                           /* 字体大小：24px，确保棋子标识清晰可见 */
+  font-weight: bold;                         /* 字体粗细：粗体，增强文字识别度 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 过渡：平滑动画效果 */
+  position: relative;                        /* 相对定位：为光效装饰提供基准 */
+  overflow: hidden;                          /* 溢出隐藏：确保光效不超出棋子边界 */
+  border: 2px solid rgba(255, 255, 255, 0.3); /* 边框：半透明白色边框，增强棋子定义 */
+}
+
+/* 棋子旋转光效装饰 - 为棋子添加动态旋转光效 */
+.piece::before {
+  content: '';                               /* 伪元素：创建光效装饰层 */
+  position: absolute;                        /* 绝对定位：覆盖整个棋子 */
+  top: -50%;                                 /* 定位：向上扩展50%，创造更大的光效范围 */
+  left: -50%;                                /* 定位：向左扩展50% */
+  width: 200%;                               /* 宽度：200%，确保光效覆盖旋转范围 */
+  height: 200%;                              /* 高度：200%，确保光效覆盖旋转范围 */
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent); /* 渐变：斜向光带效果 */
+  animation: rotate 3s linear infinite;      /* 动画：3秒线性旋转，无限循环 */
+  opacity: 0.7;                             /* 透明度：70%，subtle光效强度 */
+}
+
+/* 旋转动画关键帧 - 定义棋子光效的旋转运动 */
+@keyframes rotate {
+  0% { transform: rotate(0deg); }            /* 起始：0度旋转 */
+  100% { transform: rotate(360deg); }        /* 结束：360度旋转，完成一圈 */
+}
+
+/* 大炮棋子样式 - 大炮玩家的棋子外观 */
+.cannon {
+  background: var(--secondary-gradient);     /* 背景：使用次要渐变色（粉红色系），区分棋子类型 */
+  color: white;                              /* 文字颜色：白色，确保在彩色背景下的可读性 */
+  box-shadow: 
+    0 4px 20px rgba(245, 87, 108, 0.4),     /* 外阴影：粉红色发光效果，增强棋子存在感 */
+    inset 0 1px 0 rgba(255, 255, 255, 0.3); /* 内阴影：顶部白色内发光，增加立体感 */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* 文字阴影：白色发光，增强文字可读性 */
+}
+
+/* 小兵棋子样式 - 小兵玩家的棋子外观 */
+.soldier {
+  background: var(--accent-gradient);        /* 背景：使用强调渐变色（蓝色系），与大炮形成对比 */
+  color: white;                              /* 文字颜色：白色，确保在彩色背景下的可读性 */
+  box-shadow: 
+    0 4px 20px rgba(79, 172, 254, 0.4),     /* 外阴影：蓝色发光效果，与大炮区分 */
+    inset 0 1px 0 rgba(255, 255, 255, 0.3); /* 内阴影：顶部白色内发光，增加立体感 */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* 文字阴影：白色发光，增强文字可读性 */
+}
+
+/* 被选中棋子样式 - 当前被玩家选中的棋子状态 */
+.selected {
+  animation: glow 1s ease-in-out infinite alternate; /* 动画：发光动画，1秒缓入缓出，交替循环 */
+  transform: scale(1.1);                     /* 变换：放大至110%，突出选中状态 */
+  z-index: 10;                              /* 层级：最高层级，确保选中棋子在最前方 */
+}
+
+/* 发光动画关键帧 - 定义被选中棋子的闪烁发光效果 */
+@keyframes glow {
+  0% {
+    box-shadow: 
+      0 0 20px rgba(255, 255, 255, 0.8),     /* 第一层：内层白色发光 */
+      0 0 40px rgba(255, 255, 255, 0.6),     /* 第二层：中层白色发光 */
+      0 0 60px rgba(255, 255, 255, 0.4);     /* 第三层：外层白色发光 */
+    transform: scale(1.1);                   /* 变换：轻微放大 */
+  }
+  100% {
+    box-shadow: 
+      0 0 30px rgba(255, 255, 255, 1),       /* 第一层：增强内层发光 */
+      0 0 60px rgba(255, 255, 255, 0.8),     /* 第二层：增强中层发光 */
+      0 0 90px rgba(255, 255, 255, 0.6);     /* 第三层：增强外层发光 */
+    transform: scale(1.15);                  /* 变换：进一步放大至115% */
+  }
+} 
