@@ -9,8 +9,25 @@ import { Position } from '../types/game';
 // 注释掉模拟WebSocket服务器，使用真实服务器
 // import './mockWebSocketServer';
 
+// 动态获取WebSocket服务器地址
+function getWebSocketURL(): string {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const hostname = window.location.hostname;
+  
+  // 开发环境检测
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'ws://localhost:8080';
+  }
+  
+  // 生产环境：使用当前主机名
+  return `${protocol}//${hostname}:8080`;
+}
+
 // WebSocket服务器地址
-const WS_URL = 'ws://localhost:8080';
+const WS_URL = getWebSocketURL();
+
+// 添加调试日志
+console.log('🔗 WebSocket服务器地址:', WS_URL);
 
 class WebSocketManager {
   private ws: WebSocket | null = null;

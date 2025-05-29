@@ -3,20 +3,18 @@ version: '3.8'
 services:
   # 炮与兵棋游戏主服务
   cannon-game:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: cannon-game-app
     restart: unless-stopped
     ports:
-      - "80:80"        # HTTP端口
-      - "8080:8080"    # WebSocket端口
+      - "3000:80"    # 修改HTTP端口为3000，避免80端口冲突
+      - "8080:8080"  # WebSocket端口保持8080
     environment:
       - NODE_ENV=production
       - PORT=8080
     volumes:
       - ./logs:/app/logs                    # 应用日志挂载
-      - /var/log/nginx:/var/log/nginx       # Nginx日志挂载
+      - ./nginx-logs:/var/log/nginx       # Nginx日志挂载
     networks:
       - cannon-game-network
     healthcheck:
@@ -25,6 +23,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "1panel.app=cannon-game"
 
   # 可选：Redis缓存服务（用于扩展功能）
   redis:
@@ -46,12 +47,15 @@ services:
     image: postgres:15-alpine
     container_name: cannon-game-db
     restart: unless-stopped
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: cannon_game
       POSTGRES_USER: cannon_user
-      POSTGRES_PASSWORD: cannon_password_2024
+      POSTGRES_PASSWORD: cannon_secure_password_2024
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
     networks:
       - cannon-game-network
     profiles:

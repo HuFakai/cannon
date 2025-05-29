@@ -1,231 +1,354 @@
 #!/bin/bash
 
-# 炮与兵棋游戏 - 1Panel专用部署检查脚本
-# 简化版本，专为1Panel用户设计
+# 🎮 炮与兵棋游戏 - 1Panel环境检查工具
+# 专为1Panel用户优化的简化版检查脚本
+
+set -e
 
 # 颜色定义
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
 PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# 统计变量
-total_checks=0
-passed_checks=0
+# 游戏配置
+GAME_NAME="炮与兵棋游戏"
+CONTAINER_NAME="cannon-game-app"
+HTTP_PORT=3000  # 修改默认HTTP端口为3000
+WS_PORT=8080    # WebSocket端口保持8080
+HEALTH_ENDPOINT="/health"
 
-# 显示标题
-show_title() {
+# 显示欢迎标题
+show_welcome() {
     clear
-    echo -e "${BLUE}╔════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BLUE}║                   🎮 炮与兵棋游戏                              ║${NC}"
-    echo -e "${BLUE}║                  1Panel 部署检查工具                          ║${NC}"
-    echo -e "${BLUE}╚════════════════════════════════════════════════════════════════╝${NC}"
+    echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}║         🎮 ${GAME_NAME} 🎮         ║${NC}"
+    echo -e "${BLUE}║           1Panel 环境检查             ║${NC}"
+    echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
     echo ""
 }
 
-# 检查函数
-check_status() {
-    local name="$1"
-    local command="$2"
-    local success_msg="$3"
-    local fail_msg="$4"
+# 成功消息
+success() {
+    echo -e "${GREEN}✅ $1${NC}"
+}
+
+# 警告消息
+warning() {
+    echo -e "${YELLOW}⚠️  $1${NC}"
+}
+
+# 错误消息
+error() {
+    echo -e "${RED}❌ $1${NC}"
+}
+
+# 信息消息
+info() {
+    echo -e "${CYAN}ℹ️  $1${NC}"
+}
+
+# 检查Docker环境
+check_docker() {
+    echo -e "${PURPLE}[1/8]${NC} 检查Docker环境..."
     
-    total_checks=$((total_checks + 1))
-    echo -n "  正在检查 $name ... "
-    
-    if eval "$command" >/dev/null 2>&1; then
-        echo -e "${GREEN}✅ $success_msg${NC}"
-        passed_checks=$((passed_checks + 1))
-        return 0
+    if command -v docker >/dev/null 2>&1; then
+        local docker_version=$(docker --version 2>/dev/null | head -1)
+        success "Docker已安装: $docker_version"
+        
+        if docker info >/dev/null 2>&1; then
+            success "Docker服务运行正常"
+        else
+            error "Docker服务未运行"
+            info "1Panel中重启Docker: 容器 → Docker → 重启"
+            return 1
+        fi
     else
-        echo -e "${RED}❌ $fail_msg${NC}"
+        error "Docker未安装"
+        info "1Panel中安装Docker: 应用商店 → Docker → 安装"
         return 1
     fi
 }
 
-# 获取服务器IP
-get_server_ip() {
-    local ip=$(curl -s ipinfo.io/ip 2>/dev/null || hostname -I | awk '{print $1}')
-    echo "$ip"
+# 检查Docker Compose
+check_compose() {
+    echo -e "${PURPLE}[2/8]${NC} 检查Docker Compose..."
+    
+    if command -v docker-compose >/dev/null 2>&1; then
+        local compose_version=$(docker-compose --version 2>/dev/null)
+        success "Docker Compose已安装: $compose_version"
+    elif docker compose version >/dev/null 2>&1; then
+        local compose_version=$(docker compose version 2>/dev/null)
+        success "Docker Compose Plugin已安装: $compose_version"
+    else
+        error "Docker Compose未安装"
+        info "1Panel会自动安装Docker Compose"
+        return 1
+    fi
 }
 
-# 主检查流程
-main_check() {
-    show_title
+# 检查端口占用 - 使用新的端口配置
+check_ports() {
+    echo -e "${PURPLE}[3/8]${NC} 检查端口占用..."
     
-    echo -e "${CYAN}🔍 开始检查部署状态...${NC}"
-    echo ""
-    
-    # 基础环境检查
-    echo -e "${YELLOW}📋 基础环境检查${NC}"
-    check_status "Docker环境" "command -v docker" "Docker已安装" "Docker未安装"
-    check_status "Docker服务" "docker info" "Docker服务运行正常" "Docker服务未启动"
-    echo ""
-    
-    # 容器状态检查
-    echo -e "${YELLOW}🐳 容器状态检查${NC}"
-    check_status "主容器" "docker ps | grep cannon-game-app" "容器运行正常" "容器未运行"
-    
-    if docker ps | grep -q cannon-game-app; then
-        # 获取容器详细信息
-        container_status=$(docker ps --format "table {{.Status}}" | grep -A1 "STATUS" | tail -1)
-        echo -e "    📊 容器状态: ${GREEN}$container_status${NC}"
-        
-        # 检查资源使用
-        resource_info=$(docker stats cannon-game-app --no-stream --format "CPU: {{.CPUPerc}} | 内存: {{.MemUsage}}" 2>/dev/null)
-        if [ ! -z "$resource_info" ]; then
-            echo -e "    💻 资源使用: ${CYAN}$resource_info${NC}"
-        fi
-    fi
-    echo ""
-    
-    # 服务可用性检查
-    echo -e "${YELLOW}🌐 服务可用性检查${NC}"
-    check_status "HTTP服务" "curl -f -s http://localhost/health" "Web服务正常" "Web服务异常"
-    check_status "端口80" "netstat -tlnp 2>/dev/null | grep ':80 '" "HTTP端口监听正常" "HTTP端口未监听"
-    check_status "端口8080" "netstat -tlnp 2>/dev/null | grep ':8080 '" "WebSocket端口监听正常" "WebSocket端口未监听"
-    echo ""
-    
-    # 1Panel集成检查
-    echo -e "${YELLOW}⚙️  1Panel集成检查${NC}"
-    
-    # 检查是否在1Panel环境中
-    if [ -d "/opt/1panel" ] || [ -f "/usr/local/bin/1pctl" ]; then
-        echo -e "  ${GREEN}✅ 检测到1Panel环境${NC}"
-        
-        # 检查容器是否被1Panel管理
-        if docker ps --format "{{.Labels}}" | grep -q "createdBy.*1Panel"; then
-            echo -e "  ${GREEN}✅ 容器已被1Panel管理${NC}"
+    # 检查HTTP端口3000
+    if netstat -tlnp 2>/dev/null | grep -q ":$HTTP_PORT " || ss -tlnp 2>/dev/null | grep -q ":$HTTP_PORT "; then
+        # 检查是否是我们的容器占用的
+        if docker ps 2>/dev/null | grep -q "$CONTAINER_NAME.*:$HTTP_PORT->"; then
+            success "端口 $HTTP_PORT 被游戏容器正常使用"
         else
-            echo -e "  ${YELLOW}⚠️  容器未被1Panel管理（手动部署）${NC}"
+            warning "端口 $HTTP_PORT 被其他进程占用"
+            info "查看占用进程: netstat -tlnp | grep :$HTTP_PORT"
+            info "自动修复端口: ./check_ports.sh"
         fi
     else
-        echo -e "  ${YELLOW}⚠️  未检测到1Panel环境${NC}"
+        success "端口 $HTTP_PORT 可用"
     fi
-    echo ""
     
-    # 显示访问信息
-    show_access_info
+    # 检查WebSocket端口8080
+    if netstat -tlnp 2>/dev/null | grep -q ":$WS_PORT " || ss -tlnp 2>/dev/null | grep -q ":$WS_PORT "; then
+        if docker ps 2>/dev/null | grep -q "$CONTAINER_NAME.*:$WS_PORT->"; then
+            success "端口 $WS_PORT 被游戏容器正常使用"
+        else
+            warning "端口 $WS_PORT 被其他进程占用"
+            info "查看占用进程: netstat -tlnp | grep :$WS_PORT"
+            info "自动修复端口: ./check_ports.sh"
+        fi
+    else
+        success "端口 $WS_PORT 可用"
+    fi
+}
+
+# 检查项目文件
+check_files() {
+    echo -e "${PURPLE}[4/8]${NC} 检查项目文件..."
     
-    # 显示结果总结
-    show_summary
+    local required_files=("docker-compose.yml" "Dockerfile" "package.json" "server.js")
+    local missing_files=()
+    
+    for file in "${required_files[@]}"; do
+        if [ -f "$file" ]; then
+            success "找到文件: $file"
+        else
+            error "缺少文件: $file"
+            missing_files+=("$file")
+        fi
+    done
+    
+    if [ ${#missing_files[@]} -gt 0 ]; then
+        warning "缺少 ${#missing_files[@]} 个重要文件"
+        info "重新下载项目: git clone https://github.com/HuFakai/cannon.git"
+        return 1
+    fi
+}
+
+# 检查容器状态
+check_container() {
+    echo -e "${PURPLE}[5/8]${NC} 检查容器状态..."
+    
+    if docker ps 2>/dev/null | grep -q "$CONTAINER_NAME"; then
+        success "游戏容器正在运行"
+        
+        # 显示容器详细信息
+        local container_info=$(docker ps --filter "name=$CONTAINER_NAME" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" 2>/dev/null | tail -n +2)
+        if [ -n "$container_info" ]; then
+            info "容器信息: $container_info"
+        fi
+        
+        # 检查容器健康状态
+        local health_status=$(docker inspect --format='{{.State.Health.Status}}' "$CONTAINER_NAME" 2>/dev/null || echo "unknown")
+        case "$health_status" in
+            "healthy")
+                success "容器健康状态: 正常"
+                ;;
+            "unhealthy")
+                warning "容器健康状态: 异常"
+                info "查看容器日志: docker logs $CONTAINER_NAME"
+                ;;
+            "starting")
+                info "容器健康状态: 启动中"
+                ;;
+            *)
+                info "容器健康状态: 未知"
+                ;;
+        esac
+        
+    elif docker ps -a 2>/dev/null | grep -q "$CONTAINER_NAME"; then
+        warning "游戏容器已创建但未运行"
+        info "启动容器: docker-compose up -d"
+    else
+        warning "游戏容器不存在"
+        info "创建并启动: docker-compose up -d"
+    fi
+}
+
+# 检查服务连通性 - 使用新端口
+check_connectivity() {
+    echo -e "${PURPLE}[6/8]${NC} 检查服务连通性..."
+    
+    # 检查HTTP服务
+    if curl -f -s -m 10 "http://localhost:$HTTP_PORT$HEALTH_ENDPOINT" >/dev/null 2>&1; then
+        success "HTTP服务正常 (端口 $HTTP_PORT)"
+    else
+        warning "HTTP服务无响应 (端口 $HTTP_PORT)"
+        info "检查容器状态: docker logs $CONTAINER_NAME --tail 50"
+        
+        # 尝试其他检查方法
+        if nc -z localhost $HTTP_PORT 2>/dev/null; then
+            info "端口 $HTTP_PORT 可访问，但服务可能还在启动中"
+        else
+            warning "端口 $HTTP_PORT 无法访问"
+        fi
+    fi
+    
+    # 检查WebSocket端口连通性
+    if nc -z localhost $WS_PORT 2>/dev/null; then
+        success "WebSocket端口连通 (端口 $WS_PORT)"
+    else
+        warning "WebSocket端口无法访问 (端口 $WS_PORT)"
+    fi
+}
+
+# 检查1Panel防火墙配置
+check_firewall() {
+    echo -e "${PURPLE}[7/8]${NC} 检查1Panel防火墙配置..."
+    
+    # 获取服务器外网IP
+    local server_ip=""
+    if command -v curl >/dev/null 2>&1; then
+        server_ip=$(curl -s --connect-timeout 5 ipinfo.io/ip 2>/dev/null || echo "")
+    fi
+    
+    if [ -n "$server_ip" ]; then
+        info "服务器外网IP: $server_ip"
+        
+        # 测试外网访问
+        info "测试外网访问..."
+        if curl -f -s -m 10 "http://$server_ip:$HTTP_PORT$HEALTH_ENDPOINT" >/dev/null 2>&1; then
+            success "外网可正常访问游戏"
+        else
+            warning "外网无法访问游戏"
+            echo ""
+            echo -e "${YELLOW}请在1Panel中配置防火墙：${NC}"
+            echo "1. 进入：安全 → 防火墙"
+            echo "2. 添加规则：端口 $HTTP_PORT，协议 TCP，策略 允许"
+            echo "3. 添加规则：端口 $WS_PORT，协议 TCP，策略 允许"
+        fi
+    else
+        warning "无法获取服务器IP"
+        info "请手动检查防火墙配置"
+    fi
 }
 
 # 显示访问信息
 show_access_info() {
-    local server_ip=$(get_server_ip)
+    echo -e "${PURPLE}[8/8]${NC} 显示访问信息..."
     
-    echo -e "${PURPLE}🔗 访问信息${NC}"
-    echo -e "${PURPLE}═══════════════════════════════════════${NC}"
-    
-    if [ ! -z "$server_ip" ]; then
-        echo -e "  🌐 游戏地址:    ${CYAN}http://$server_ip${NC}"
-        echo -e "  📊 状态监控:    ${CYAN}http://$server_ip/status.html${NC}"
-        echo -e "  💚 健康检查:    ${CYAN}http://$server_ip/health${NC}"
-    else
-        echo -e "  🌐 游戏地址:    ${CYAN}http://your-server-ip${NC}"
-        echo -e "  📊 状态监控:    ${CYAN}http://your-server-ip/status.html${NC}"
-        echo -e "  💚 健康检查:    ${CYAN}http://your-server-ip/health${NC}"
+    # 获取服务器IP
+    local server_ip=""
+    if command -v curl >/dev/null 2>&1; then
+        server_ip=$(curl -s --connect-timeout 5 ipinfo.io/ip 2>/dev/null)
     fi
     
-    echo -e "  🔧 1Panel管理:  ${CYAN}容器 -> 容器管理 -> cannon-game-app${NC}"
-    echo ""
-}
-
-# 显示结果总结
-show_summary() {
-    echo -e "${PURPLE}📋 检查结果总结${NC}"
-    echo -e "${PURPLE}═══════════════════════════════════════${NC}"
-    
-    if [ $passed_checks -eq $total_checks ]; then
-        echo -e "  ${GREEN}🎉 所有检查项通过！($passed_checks/$total_checks)${NC}"
-        echo -e "  ${GREEN}📱 游戏部署成功，可以正常使用！${NC}"
-        echo ""
-        
-        echo -e "${BLUE}🎮 快速操作${NC}"
-        echo -e "  • 打开游戏: 在浏览器中访问上方的游戏地址"
-        echo -e "  • 查看日志: 在1Panel中进入容器管理查看日志"
-        echo -e "  • 重启服务: 在1Panel中重启cannon-game-app容器"
-        
-    else
-        echo -e "  ${RED}❌ 部分检查失败 ($passed_checks/$total_checks)${NC}"
-        echo ""
-        
-        echo -e "${YELLOW}🔧 建议操作${NC}"
-        echo -e "  1. 检查1Panel中的Docker服务状态"
-        echo -e "  2. 查看容器日志: docker logs cannon-game-app"
-        echo -e "  3. 重新部署: ./deploy.sh -p"
-        echo -e "  4. 运行完整检查: ./check-deployment.sh"
+    if [ -z "$server_ip" ]; then
+        server_ip="您的服务器IP"
     fi
     
     echo ""
-    echo -e "${CYAN}💡 提示: 如需详细诊断信息，请运行 './check-deployment.sh'${NC}"
+    echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}║             🌐 访问信息                ║${NC}"
+    echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
+    echo -e "${GREEN}游戏地址:${NC} http://$server_ip:$HTTP_PORT"
+    echo -e "${GREEN}状态监控:${NC} http://$server_ip:$HTTP_PORT/status.html"
+    echo -e "${GREEN}健康检查:${NC} http://$server_ip:$HTTP_PORT/health"
+    echo ""
+    
+    # 显示端口信息
+    echo -e "${CYAN}端口配置:${NC}"
+    echo -e "  HTTP服务: $HTTP_PORT"
+    echo -e "  WebSocket: $WS_PORT"
+    echo ""
 }
 
-# 显示帮助信息
-show_help() {
-    echo -e "${BLUE}1Panel 部署检查工具使用说明${NC}"
+# 显示操作建议
+show_suggestions() {
+    echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}║             💡 操作建议                ║${NC}"
+    echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
+    
+    echo -e "${CYAN}如果遇到问题：${NC}"
+    echo "• 端口冲突: ./check_ports.sh"
+    echo "• 重新部署: docker-compose up -d --force-recreate"
+    echo "• 查看日志: docker logs $CONTAINER_NAME"
+    echo "• 完整检查: ./deploy.sh -c"
     echo ""
-    echo "用法: $0 [选项]"
+    
+    echo -e "${CYAN}1Panel操作：${NC}"
+    echo "• 防火墙设置: 安全 → 防火墙"
+    echo "• 容器管理: 容器 → Docker"
+    echo "• 文件管理: 文件 → 文件管理"
     echo ""
-    echo "选项:"
-    echo "  -h, --help    显示此帮助信息"
-    echo "  -q, --quiet   静默模式（仅显示结果）"
-    echo "  -v, --verbose 详细模式（显示所有信息）"
-    echo ""
-    echo "示例:"
-    echo "  $0            # 标准检查"
-    echo "  $0 -q         # 静默检查"
-    echo "  $0 -v         # 详细检查"
 }
 
-# 静默模式检查
-quiet_check() {
-    if docker ps | grep -q cannon-game-app && curl -f -s http://localhost/health >/dev/null; then
-        echo -e "${GREEN}✅ 游戏服务运行正常${NC}"
-        local server_ip=$(get_server_ip)
-        if [ ! -z "$server_ip" ]; then
-            echo -e "🌐 访问地址: ${CYAN}http://$server_ip${NC}"
-        fi
-        exit 0
-    else
-        echo -e "${RED}❌ 游戏服务异常${NC}"
-        echo -e "💡 运行 '$0 -v' 查看详细信息"
-        exit 1
-    fi
-}
-
-# 主函数
+# 主程序
 main() {
-    case "$1" in
-        -h|--help)
-            show_help
-            ;;
-        -q|--quiet)
-            quiet_check
-            ;;
-        -v|--verbose)
-            # 使用完整的检查脚本
-            if [ -f "./check-deployment.sh" ]; then
-                ./check-deployment.sh
-            else
-                echo -e "${YELLOW}⚠️  未找到详细检查脚本，使用标准检查...${NC}"
-                main_check
-            fi
-            ;;
-        "")
-            main_check
-            ;;
-        *)
-            echo -e "${RED}错误: 未知选项 '$1'${NC}"
-            show_help
-            exit 1
-            ;;
-    esac
+    show_welcome
+    
+    local check_failed=0
+    
+    # 执行所有检查
+    check_docker || ((check_failed++))
+    echo ""
+    
+    check_compose || ((check_failed++))
+    echo ""
+    
+    check_ports || ((check_failed++))
+    echo ""
+    
+    check_files || ((check_failed++))
+    echo ""
+    
+    check_container || ((check_failed++))
+    echo ""
+    
+    check_connectivity || ((check_failed++))
+    echo ""
+    
+    check_firewall || ((check_failed++))
+    echo ""
+    
+    show_access_info
+    show_suggestions
+    
+    # 显示检查结果总结
+    echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}║             📊 检查结果                ║${NC}"
+    echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
+    
+    if [ $check_failed -eq 0 ]; then
+        echo -e "${GREEN}🎉 所有检查通过！游戏部署成功！${NC}"
+        echo -e "${GREEN}   您可以开始使用 $GAME_NAME 了${NC}"
+    else
+        echo -e "${YELLOW}⚠️  发现 $check_failed 个问题，请参考上面的建议进行修复${NC}"
+        
+        if [ $check_failed -ge 3 ]; then
+            echo ""
+            echo -e "${CYAN}建议执行完整重新部署：${NC}"
+            echo "./deploy.sh -p"
+        fi
+    fi
+    
+    echo ""
+    echo -e "${CYAN}需要帮助？查看文档：${NC}"
+    echo "• 1Panel部署指南: 1Panel服务器部署指南.md"
+    echo "• 端口修改指南: 端口修改指南.md"
+    echo "• 完整文档: README.md"
+    echo ""
 }
 
-# 执行主函数
+# 执行主程序
 main "$@" 

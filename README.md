@@ -3,6 +3,19 @@
 ## 项目描述
 这是一个基于React和TypeScript开发的6x6棋盘策略游戏，采用现代化的科技风UI设计。
 
+## 🚨 重要端口说明
+
+**为避免端口冲突，本游戏已将默认端口配置更新为：**
+- **HTTP服务端口**: 3000 (原80端口)
+- **WebSocket端口**: 8080 (保持不变)
+
+如果这些端口仍有冲突，请查看：[`端口修改指南.md`](./端口修改指南.md)
+
+**部署后访问地址：**
+- **游戏主页**: http://您的服务器IP:3000
+- **状态监控**: http://您的服务器IP:3000/status.html
+- **健康检查**: http://您的服务器IP:3000/health
+
 ## 最新更新 (UI优化)
 - ✅ 游戏规则组件尺寸优化：宽度与棋盘精确匹配（404px）
 - ✅ 布局对齐优化：游戏规则与左侧面板保持水平对齐
@@ -17,7 +30,7 @@
 
 ```bash
 # 第1步：下载项目
-git clone <repository-url> && cd cannonweb
+git clone https://github.com/HuFakai/cannon.git && cd cannon
 
 # 第2步：运行超级一键部署（自动安装一切依赖）
 ./一键部署.sh
@@ -27,7 +40,7 @@ git clone <repository-url> && cd cannonweb
 - ✅ 检查并安装Docker环境
 - ✅ 检查并安装Docker Compose
 - ✅ 构建游戏镜像
-- ✅ 启动游戏服务
+- ✅ 启动游戏服务（端口3000）
 - ✅ 验证部署状态
 - ✅ 显示访问地址
 
@@ -46,11 +59,27 @@ git clone <repository-url> && cd cannonweb
 - 💾 自动备份选项
 - 📊 实时状态检查
 - 🔧 详细的配置预览和确认
+- 🔧 **自动端口检测与配置**
+
+### 🔧 端口冲突解决
+
+如果3000端口也被占用，可以使用自动端口检测工具：
+
+```bash
+# 自动检测可用端口并更新配置
+./check_ports.sh
+```
+
+这个工具会：
+- 🔍 检测端口占用情况
+- 🔧 自动找到可用端口
+- ⚙️ 更新docker-compose.yml配置
+- 🚀 可选择立即重新部署
 
 ### 🌐 立即访问
 部署完成后：
-- **游戏地址**: http://您的服务器IP
-- **状态监控**: http://您的服务器IP/status.html
+- **游戏地址**: http://您的服务器IP:3000
+- **状态监控**: http://您的服务器IP:3000/status.html
 
 ---
 
@@ -62,7 +91,7 @@ git clone <repository-url> && cd cannonweb
 
 ```bash
 # 第1步：下载项目到服务器
-git clone <repository-url> && cd cannonweb
+git clone https://github.com/HuFakai/cannon.git && cd cannon
 
 # 第2步：给脚本执行权限
 chmod +x *.sh
@@ -74,9 +103,16 @@ chmod +x *.sh
 ./1panel-check.sh
 ```
 
+### 🔥 防火墙重要提醒
+
+⚠️ **必须在1Panel中开放端口**：
+1. 进入：安全 → 防火墙
+2. 添加规则：端口 **3000**，协议 TCP，策略 允许
+3. 添加规则：端口 **8080**，协议 TCP，策略 允许
+
 ### 🌐 立即访问
-- **游戏地址**: http://您的服务器IP
-- **状态监控**: http://您的服务器IP/status.html
+- **游戏地址**: http://您的服务器IP:3000
+- **状态监控**: http://您的服务器IP:3000/status.html
 
 ### 📋 1Panel管理
 部署完成后，您可以在1Panel中：
@@ -88,11 +124,45 @@ chmod +x *.sh
 ### 🔧 高级配置（可选）
 
 **通过1Panel网站功能访问：**
-1. 创建反向代理网站：域名指向 `http://127.0.0.1:80`
+1. 创建反向代理网站：域名指向 `http://127.0.0.1:3000`
 2. 配置SSL证书：在1Panel中申请Let's Encrypt证书
-3. 开放防火墙端口：80、443、8080
+3. 开放防火墙端口：3000、8080、443
 
 详细配置步骤请参考：[`1Panel部署快速指南.md`](./1Panel部署快速指南.md)
+
+### 🌐 1Panel网站配置（解决HTTP服务无法访问）
+
+如果游戏容器运行正常但HTTP服务无法访问，需要在1Panel中创建网站配置：
+
+#### 🚀 一键配置向导
+```bash
+# 运行网站配置向导（推荐）
+./1panel-website-setup.sh
+```
+
+#### 📋 手动配置步骤
+1. **登录1Panel管理面板**
+2. **创建网站**: 网站 → 网站管理 → 创建网站
+3. **基本配置**:
+   - 网站类型: `反向代理`
+   - 主域名: `您的服务器IP` (如: 101.126.146.167)
+   - 端口: `80` (或其他可用端口)
+4. **反向代理设置**:
+   - 代理地址: `http://127.0.0.1:3000`
+   - 代理端口: `3000`
+5. **高级设置**:
+   - ✅ 开启WebSocket支持
+   - ✅ 设置代理超时: 60s
+   - ❌ 关闭缓存
+   - ✅ 开启日志记录
+
+#### 🔍 配置验证
+配置完成后，您应该能够通过以下地址访问：
+- **游戏主页**: http://您的服务器IP
+- **健康检查**: http://您的服务器IP/health
+- **状态监控**: http://您的服务器IP/status.html
+
+**详细配置指南**: [`1Panel网站配置指南.md`](./1Panel网站配置指南.md)
 
 ---
 
@@ -103,8 +173,8 @@ chmod +x *.sh
 1. **准备环境**
    ```bash
    # 克隆项目
-   git clone <repository-url>
-   cd cannonweb
+   git clone https://github.com/HuFakai/cannon.git
+   cd cannon
    
    # 确保1Panel已安装Docker和Docker Compose
    ```
@@ -119,15 +189,45 @@ chmod +x *.sh
    
    # 查看帮助
    ./deploy.sh -h
+   
+   # 端口冲突检测
+   ./check_ports.sh
    ```
 
 3. **访问应用**
-   - 游戏地址：http://your-server-ip
-   - 健康检查：http://your-server-ip/health
+   - 游戏地址：http://your-server-ip:3000
+   - 健康检查：http://your-server-ip:3000/health
 
 ### 方式二：手动部署到1Panel
 
 详细步骤请参考 [`DEPLOYMENT.md`](./DEPLOYMENT.md) 文件。
+
+## 📚 部署文档
+
+我们提供了完整的部署文档和工具：
+
+### 📖 文档指南
+- [`部署状态概览.md`](./部署状态概览.md) - 完整部署解决方案总览
+- [`快速入门.md`](./快速入门.md) - 30秒快速开始
+- [`重新部署快速指南.md`](./重新部署快速指南.md) - 重新部署场景选择
+- [`部署方案总结.md`](./部署方案总结.md) - 详细方案对比
+- [`1Panel部署快速指南.md`](./1Panel部署快速指南.md) - 1Panel专用指南
+- [`1Panel服务器部署指南.md`](./1Panel服务器部署指南.md) - 服务器部署详解
+- [`1Panel网站配置指南.md`](./1Panel网站配置指南.md) - 网站反向代理配置
+- [`HTTP服务无法访问解决方案.md`](./HTTP服务无法访问解决方案.md) - 常见访问问题解决
+- [`端口修改指南.md`](./端口修改指南.md) - 端口冲突解决方案
+- [`端口配置说明.md`](./端口配置说明.md) - 端口配置快速参考
+- [`部署文件清单.md`](./部署文件清单.md) - 完整文件检查清单
+
+### 🛠️ 部署工具
+- `一键部署.sh` - 零基础用户超级一键部署
+- `部署助手.sh` - 交互式部署助手
+- `deploy.sh` - 1Panel专用部署脚本
+- `重新部署检查.sh` - 全面的重新部署检查工具
+- `check_ports.sh` - 自动端口检测工具
+- `1panel-check.sh` - 1Panel检查工具
+- `1panel-website-setup.sh` - 1Panel网站配置向导
+- `fix-deployment.sh` - 部署问题修复工具
 
 ## 游戏规则
 1. 🎯 大炮玩家操作2枚"大炮"棋子
@@ -148,25 +248,37 @@ chmod +x *.sh
 - Docker容器化部署
 - Nginx反向代理
 - 多进程管理（Supervisor）
+- 自动端口检测与配置
 
 ## 📁 项目结构
 ```
 cannonweb/
-├── public/                   # 静态资源
-├── src/                      # 源代码
-│   ├── components/           # React组件
-│   ├── styles/              # CSS样式文件
+├── public/                          # 静态资源
+├── src/                             # 源代码
+│   ├── components/                  # React组件
+│   ├── styles/                      # CSS样式文件
 │   └── ...
-├── docker/                   # Docker配置文件
-│   ├── nginx.conf           # Nginx主配置
-│   ├── default.conf         # 站点配置
-│   └── supervisord.conf     # 进程管理配置
-├── server.js                 # WebSocket服务器
-├── Dockerfile               # Docker镜像构建文件
-├── docker-compose.yml       # Docker Compose配置
-├── deploy.sh                # 自动化部署脚本
-├── DEPLOYMENT.md            # 详细部署文档
-└── README.md                # 项目说明
+├── docker/                          # Docker配置文件
+│   ├── nginx.conf                  # Nginx主配置
+│   ├── default.conf                # 站点配置
+│   └── supervisord.conf            # 进程管理配置
+├── docs/                           # 文档目录
+│   ├── 快速入门.md
+│   ├── 部署方案总结.md
+│   ├── 1Panel部署快速指南.md
+│   ├── 1Panel服务器部署指南.md
+│   ├── 端口修改指南.md
+│   └── 部署文件清单.md
+├── server.js                       # WebSocket服务器
+├── Dockerfile                      # Docker镜像构建文件
+├── docker-compose.yml              # Docker Compose配置
+├── deploy.sh                       # 自动化部署脚本
+├── 一键部署.sh                      # 超级一键部署脚本
+├── 部署助手.sh                      # 交互式部署助手
+├── check_ports.sh                  # 端口检测工具
+├── 1panel-check.sh                 # 1Panel检查工具
+├── DEPLOYMENT.md                   # 详细部署文档
+└── README.md                       # 项目说明
 ```
 
 ## 🔧 本地开发
@@ -188,7 +300,7 @@ npm run build               # 构建前端
 
 ### 使用Docker Compose
 ```bash
-# 生产环境
+# 生产环境（使用端口3000）
 docker-compose up -d cannon-game
 
 # 开发环境（包含Redis和数据库）
