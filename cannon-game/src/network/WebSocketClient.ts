@@ -32,7 +32,13 @@ export class WebSocketClient {
     private shouldReconnect = true;
     private connectionListeners: Array<(connected: boolean) => void> = [];
 
-    constructor(private url: string = import.meta.env.VITE_WS_URL || 'ws://localhost:3000') { }
+    constructor(private url: string = import.meta.env.VITE_WS_URL || 'ws://localhost:3000') {
+        // 如果是相对路径，自动补充协议和主机
+        if (this.url.startsWith('/')) {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            this.url = `${protocol}//${window.location.host}${this.url}`;
+        }
+    }
 
     connect(): Promise<void> {
         return new Promise((resolve, reject) => {
