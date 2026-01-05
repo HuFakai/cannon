@@ -1,0 +1,35 @@
+services:
+  # 后端WebSocket服务
+  cannon-server:
+    build: ./cannon-server
+    container_name: cannon-server
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    networks:
+      - cannon-network
+
+  # 前端Nginx服务
+  cannon-game:
+    build:
+      context: ./cannon-game
+      args:
+        # 构建时指定WebSocket地址
+        # 使用wss://your-domain.com/ws 如果通过Nginx反代
+        # 使用ws://your-server-ip:3000 如果直连
+        VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:3000}
+    container_name: cannon-game
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - cannon-server
+    networks:
+      - cannon-network
+
+networks:
+  cannon-network:
+    driver: bridge

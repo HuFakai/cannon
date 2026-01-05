@@ -2,13 +2,89 @@
 
 ## 目录
 
-1. [项目概述](#项目概述)
-2. [环境要求](#环境要求)
-3. [部署准备](#部署准备)
-4. [后端部署](#后端部署)
-5. [前端部署](#前端部署)
-6. [Nginx 反向代理配置](#nginx-反向代理配置)
-7. [常见问题](#常见问题)
+1. [🐳 Docker一键部署（推荐）](#docker一键部署推荐)
+2. [传统部署方式](#传统部署方式)
+3. [Nginx 反向代理配置](#nginx-反向代理配置)
+4. [常见问题](#常见问题)
+
+---
+
+## 🐳 Docker一键部署（推荐）
+
+**最简单的部署方式，只需3步！**
+
+### 前置条件
+
+- 服务器已安装 Docker 和 Docker Compose
+- 1Panel 中已开启 Docker 功能
+
+### 步骤 1：克隆项目
+
+```bash
+cd /www/wwwroot
+git clone https://github.com/HuFakai/cannon.git
+cd cannon
+```
+
+### 步骤 2：配置环境变量
+
+```bash
+cp .env.docker.example .env
+```
+
+编辑 `.env` 文件，修改 WebSocket 地址：
+
+```env
+# 直连方式（简单，不需要Nginx反代WebSocket）
+VITE_WS_URL=ws://你的服务器IP:3000
+
+# 或者使用域名反代方式（需要配置Nginx）
+# VITE_WS_URL=wss://your-domain.com/ws
+```
+
+### 步骤 3：一键启动
+
+```bash
+docker compose up -d --build
+```
+
+**完成！** 🎉
+
+- 前端访问：`http://你的服务器IP:8080`
+- WebSocket：`ws://你的服务器IP:3000`
+
+### Docker 常用命令
+
+```bash
+# 查看容器状态
+docker compose ps
+
+# 查看日志
+docker compose logs -f
+
+# 停止服务
+docker compose down
+
+# 重新构建并启动
+docker compose up -d --build
+
+# 仅重启某个服务
+docker compose restart cannon-server
+```
+
+### 使用 1Panel 管理
+
+在 1Panel 中：
+1. 进入 **容器** → **编排**
+2. 点击 **从Compose创建**
+3. 选择项目目录 `/www/wwwroot/cannon`
+4. 点击部署
+
+---
+
+## 传统部署方式
+
+如果不想使用 Docker，可以按以下步骤手动部署。
 
 ---
 
