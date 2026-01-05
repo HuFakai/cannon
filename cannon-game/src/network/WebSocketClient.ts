@@ -1,16 +1,18 @@
 
-export enum MessageType {
-    CREATE_ROOM = 'CREATE_ROOM',
-    JOIN_ROOM = 'JOIN_ROOM',
-    LEAVE_ROOM = 'LEAVE_ROOM',
-    GAME_START = 'GAME_START',
-    MOVE = 'MOVE',
-    GAME_OVER = 'GAME_OVER',
-    ERROR = 'ERROR',
-    PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED',
-    REMATCH_REQUEST = 'REMATCH_REQUEST',
-    REMATCH_NOTIFY = 'REMATCH_NOTIFY'
-}
+export const MessageType = {
+    CREATE_ROOM: 'CREATE_ROOM',
+    JOIN_ROOM: 'JOIN_ROOM',
+    LEAVE_ROOM: 'LEAVE_ROOM',
+    GAME_START: 'GAME_START',
+    MOVE: 'MOVE',
+    GAME_OVER: 'GAME_OVER',
+    ERROR: 'ERROR',
+    PLAYER_DISCONNECTED: 'PLAYER_DISCONNECTED',
+    REMATCH_REQUEST: 'REMATCH_REQUEST',
+    REMATCH_NOTIFY: 'REMATCH_NOTIFY'
+} as const;
+
+export type MessageType = typeof MessageType[keyof typeof MessageType];
 
 export interface WSMessage {
     type: MessageType;

@@ -9,10 +9,7 @@ export interface Position {
 }
 
 // 棋子类型
-export const enum PieceType {
-    CANNON = 'cannon',   // 大炮
-    SOLDIER = 'soldier'  // 小兵
-}
+export type PieceType = 'cannon' | 'soldier';
 
 // 玩家类型
 export type PlayerType = 'cannon' | 'soldier';
@@ -44,17 +41,8 @@ export interface GameState {
 }
 
 // 游戏模式
-export const enum GameMode {
-    LOCAL = 'local',      // 本地双人对战
-    ONLINE = 'online',    // 联机对战
-    AI_EASY = 'ai_easy',  // 简单AI
-    AI_MEDIUM = 'ai_medium',  // 中等AI
-    AI_HARD = 'ai_hard'   // 困难AI
-}
+export type GameMode = 'local' | 'online' | 'ai_easy' | 'ai_medium' | 'ai_hard';
 
 // AI难度等级
-export const enum AIDifficulty {
-    EASY = 1,
-    MEDIUM = 2,
-    HARD = 3
-}
+export type AIDifficulty = 1 | 2 | 3;
+
