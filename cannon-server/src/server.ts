@@ -161,7 +161,9 @@ function handleMessage(player: Player, message: any) {
     }
 }
 
-server.listen(PORT, () => {
-    console.log(`服务器运行在 http://localhost:${PORT}`);
+const HOST = process.env.HOST || '0.0.0.0';
+
+server.listen(PORT, HOST, () => {
+    console.log(`服务器运行在 http://${HOST}:${PORT}`);
     console.log(`WebSocket 服务器已准备就绪`);
 });
