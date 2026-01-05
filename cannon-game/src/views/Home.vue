@@ -319,17 +319,24 @@ const showRules = ref(false);
 
 @media (max-width: 480px) {
   .game-title {
-    font-size: 36px;
+    font-size: 32px;
+    letter-spacing: 1px;
   }
   
   .game-subtitle {
-    font-size: 16px;
-    margin-bottom: 30px;
+    font-size: 14px;
+    margin-bottom: 25px;
   }
   
+  .menu-options {
+    gap: 15px;
+  }
+
   .menu-card {
     padding: 15px;
     border-radius: 16px;
+    width: 100%;
+    max-width: 280px;
   }
   
   .card-image-wrapper {
@@ -346,7 +353,7 @@ const showRules = ref(false);
   }
   
   .modal-content {
-    padding: 25px;
+    padding: 20px;
     width: 95%;
   }
   

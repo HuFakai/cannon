@@ -548,6 +548,99 @@ const goHome = () => {
   margin: 0 auto;
 }
 
+@media (max-width: 600px) {
+  .game-stats-bar {
+    padding: 10px 15px;
+    border-radius: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .player-card {
+    gap: 8px;
+    padding: 4px 8px;
+  }
+  
+  .piece-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+  
+  .player-info .label {
+    font-size: 10px;
+  }
+  
+  .player-info .count {
+    font-size: 16px;
+  }
+  
+  .difficulty-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  .round-info .round-label {
+    display: none;
+  }
+  
+  .round-info .round-count {
+    font-size: 16px;
+  }
+
+  .game-title {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  .player-options {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .player-option {
+    width: 100%;
+    min-width: unset;
+    padding: 20px;
+  }
+
+  .difficulty-options {
+    flex-direction: column;
+    align-items: center; 
+    gap: 15px;
+  }
+  
+  .difficulty-card {
+    width: 100%;
+    min-width: unset;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+  }
+  
+  .difficulty-icon {
+    font-size: 32px;
+    margin-bottom: 0;
+  }
+  
+  .difficulty-card h3 {
+    margin-bottom: 5px;
+    font-size: 18px;
+  }
+  
+  .difficulty-card p {
+    font-size: 12px;
+  }
+
+  .btn-start {
+    font-size: 18px;
+    padding: 15px 40px;
+    width: 100%;
+  }
+}
+
 .player-card {
   display: flex;
   align-items: center;

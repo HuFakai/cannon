@@ -161,6 +161,40 @@ const closeModal = () => {
   width: 100%;
 }
 
+@media (max-width: 600px) {
+  .game-stats-bar {
+    padding: 10px 15px;
+    border-radius: 16px;
+  }
+  
+  .player-card {
+    gap: 8px;
+    padding: 4px 8px;
+  }
+  
+  .piece-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+  
+  .player-info .label {
+    font-size: 10px;
+  }
+  
+  .player-info .count {
+    font-size: 16px;
+  }
+  
+  .round-label {
+    display: none;
+  }
+  
+  .round-count {
+    font-size: 16px;
+  }
+}
+
 .player-card {
   display: flex;
   align-items: center;
